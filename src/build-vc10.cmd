@@ -7,7 +7,7 @@ set INCLUDE=%VCDIR%\VC\INCLUDE;%PSDK%\Include\um
 set LIB=%VCDIR%\VC\LIB;%PSDK%\Lib\winv6.3\um\x86
 set PATH=%VCDIR%\Common7\IDE;%VCDIR%\VC\BIN;%PATH%
 
-cl.exe /W3 bdecli.c > bdecli.vc10.err
+cl.exe /W4 bdecli.c > bdecli.vc10.err
 rem /W1 to /W4 for warnings, /WX to treat warning as errors, /O2 for moderate optimization
 
 del *.obj

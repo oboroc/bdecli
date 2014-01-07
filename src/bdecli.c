@@ -427,7 +427,7 @@ void bde_config_write(pBDEConfigEntry list, char *szFileName)
 
 		/* check if we should put the 'end of container' byte sequence */
 		if ((current->next) &&						/* there is a next entry */
-			(current->entry_type = BDE_Variable) &&			/* current entry is a variable */
+			(current->entry_type == BDE_Variable) &&		/* current entry is a variable */
 			(current->container != current->next->container))	/* and it has a different container */
 		{
 			eob = 0;
