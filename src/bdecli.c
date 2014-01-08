@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <errno.h>
 
+#include "vc6fix.h"
+
 
 #define	PROGRAM_VERSION	"1.0.0"
 #define MAX_BUFFER	10000
@@ -110,8 +112,7 @@ pBDEConfigEntry bde_new_entry(pBDEConfigEntry prev, pBDEConfigEntry cont)
 pBDEConfigEntry bde_config_parse(char *szFileName)
 {
 	FILE *f;
-	errno_t err;
-	int ch;
+	int err, ch;
 	char *str, *value;
 	pBDEConfigEntry start, current;
 
@@ -292,7 +293,7 @@ int bde_containers(pBDEConfigEntry entry)
 void bde_config_export(pBDEConfigEntry list, char *szFileName)
 {
 	FILE *f;
-	errno_t err;
+	int err;
 	pBDEConfigEntry current;
 	char *str;
 
@@ -368,8 +369,7 @@ void bde_fputs(char *str, FILE *f)
 void bde_config_write(pBDEConfigEntry list, char *szFileName)
 {
 	FILE *f;
-	errno_t err;
-	int ld, eob;
+	int err, ld, eob;
 	pBDEConfigEntry current, tmp_c, tmp_n;
 
 	/* Initialize current pointer */
@@ -684,9 +684,8 @@ int bde_config_add_entry(pBDEConfigEntry list, char *szFQNPath, char *szName, ch
 int bde_config_update(pBDEConfigEntry list, char *szFileName)
 {	
 	FILE *f;
-	errno_t err;
+	int err, i, change_no = 0;
 	char buf[MAX_BUFFER], *szFQNPath, *szName, *szValue;
-	int i, change_no = 0;
 
 	err = fopen_s(&f, szFileName, "r");	/* open for reading */
 
