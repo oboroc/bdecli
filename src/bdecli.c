@@ -27,14 +27,14 @@ typedef struct s_BDEConfigEntry
 } tBDEConfigEntry, *pBDEConfigEntry;
 
 
-char *bde_fgets(FILE *stream)
+char *bde_fgets(FILE *f)
 {
 	char *str;
 	int ch;
 	char buf[MAX_BUFFER];
-	rsize_t iStrSize;
+	int r_len;
 
-	ch = fgetc(stream);
+	ch = fgetc(f);
 
 	/* we expect byte with value 0 */
 	if (BDE_NUL != ch)
@@ -44,25 +44,25 @@ char *bde_fgets(FILE *stream)
 	}
 
 	/* initial length of return string */
-	iStrSize = 0;
+	r_len = 0;
 
 	do
 	{
 		/* build string in heap buffer */
-		ch = fgetc(stream);
-		buf[iStrSize] = (char)ch;
+		ch = fgetc(f);
+		buf[r_len] = (char)ch;
 
-		iStrSize++;
+		r_len++;
 
 		/* check for potential buffer overflow */
-		if (MAX_BUFFER == iStrSize)
+		if (MAX_BUFFER == r_len)
 		{
 			printf_s("Error in bde_fgets(): buffer overflow in string parser\n");
 			return NULL;	/* fail */
 		}
 
 		/* check for unexpected end of file */
-		if (feof(stream))
+		if (feof(f))
 		{
 			printf_s("Error in bde_fgets(): unexpected end of file in string parser\n");
 			return NULL;
@@ -71,15 +71,15 @@ char *bde_fgets(FILE *stream)
 	} while ((BDE_NUL != ch));
 
 	/* allocate memory for the return string */
-	str = (char *)malloc(iStrSize);
+	str = (char *)malloc(r_len);
 
 	if (!str)
 	{
-		printf_s("Error in bde_fgets(): failed to allocate %i bytes of memory for return string\n", iStrSize);
+		printf_s("Error in bde_fgets(): failed to allocate %i bytes of memory for return string\n", r_len);
 		return NULL;
 	}
 
-	strcpy_s(str, iStrSize, buf);	/* copy heap buffer to return string */
+	strcpy_s(str, r_len, buf);	/* copy heap buffer to return string */
 
 	return str;
 }
@@ -109,7 +109,7 @@ pBDEConfigEntry bde_new_entry(pBDEConfigEntry prev, pBDEConfigEntry cont)
 
 pBDEConfigEntry bde_config_parse(char *szFileName)
 {
-	FILE *stream;
+	FILE *f;
 	errno_t err;
 	int ch;
 	char *str, *value;
@@ -119,7 +119,7 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 	start = bde_new_entry(NULL, NULL);
 	current = start;
 	
-	err = fopen_s(&stream, szFileName, "r");	/* open for read (will fail if file does not exist) */
+	err = fopen_s(&f, szFileName, "r");	/* open for read (will fail if file does not exist) */
 
 	if (0 != err)
 	{
@@ -127,9 +127,9 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 		return NULL;
 	}
 
-	ch = fgetc(stream);
+	ch = fgetc(f);
 
-	while (!feof(stream))
+	while (!feof(f))
 	{
 		if (BDE_NEW != ch)
 		{
@@ -137,7 +137,7 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 			return NULL;
 		}
 
-		ch = fgetc(stream);
+		ch = fgetc(f);
 		if (BDE_NUL != ch)
 		{
 			printf_s("Error in bde_config_parse(): unexpected second byte at the beginning of line. Expected %i, actual value %i\n", BDE_NUL, ch); 
@@ -145,23 +145,23 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 		}
 
 
-		ch = fgetc(stream);	/* read block id from file */
+		ch = fgetc(f);	/* read block id from file */
 
 		switch(ch)
 		{
 
 		case BDE_NUL:	/* 0x0000 - contrainer */
 
-			str = bde_fgets(stream);
+			str = bde_fgets(f);
 
-			ch = fgetc(stream);
+			ch = fgetc(f);
 			if (BDE_VAR != ch)
 			{
 				printf_s("Error in bde_config_parse(): unexpected byte at the end of contrainer name. Expected %i, actual value is %i\n", BDE_VAR, ch);
 				return NULL;
 			}
 					
-			ch = fgetc(stream);
+			ch = fgetc(f);
 			if (BDE_NUL != ch)
 			{
 				printf_s("Error in bde_config_parse(): unexpected second byte after the end of contrainer name. Expected %i, actual value is %i\n", BDE_NUL, ch);
@@ -176,16 +176,16 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 
 		case BDE_VAR:	/* 0x0001 - value */
 
-			str = bde_fgets(stream);
+			str = bde_fgets(f);
 
-			ch = fgetc(stream);
+			ch = fgetc(f);
 			if (BDE_EQU != ch)
 			{
 				printf_s("Error in bde_config_parse(): unexpected byte between variable name and value. Expected %i, actual value %i\n", BDE_EQU, ch); 
 				return NULL;
 			}
 
-			value = bde_fgets(stream);
+			value = bde_fgets(f);
 
 			if (!value)
 			{
@@ -210,7 +210,7 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 
 		/* parse the end of line */
 		do {
-			ch = fgetc(stream);
+			ch = fgetc(f);
 
 			if (BDE_EOB == ch)
 			{
@@ -219,7 +219,7 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 					current->container = current->container->container;	
 
 				/* check for padding zero byte */
-				ch = fgetc(stream);
+				ch = fgetc(f);
 
 				if (BDE_NUL != ch)
 				{
@@ -227,7 +227,7 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 					return NULL;
 				}
 			}
-		} while ((!feof(stream)) && (BDE_NEW != ch));
+		} while ((!feof(f)) && (BDE_NEW != ch));
 	};
 
 	if (!current->name)	/* sanitize last preallocated linked list entry */
@@ -237,7 +237,7 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 	}
 
 	/* close stream */
-	if ((stream) && (fclose(stream)))
+	if ((f) && (fclose(f)))
 		printf_s("Error in bde_config_parse(): the file was not closed\n");
 
 	return start;
@@ -291,7 +291,7 @@ int bde_containers(pBDEConfigEntry entry)
 
 void bde_config_export(pBDEConfigEntry list, char *szFileName)
 {
-	FILE *stream;
+	FILE *f;
 	errno_t err;
 	pBDEConfigEntry current;
 	char *str;
@@ -299,7 +299,7 @@ void bde_config_export(pBDEConfigEntry list, char *szFileName)
 	/* Initialize current pointer */
 	current = list;
 	
-	err = fopen_s(&stream, szFileName, "w");	/* open for writing (will overwrite if file exists) */
+	err = fopen_s(&f, szFileName, "w");	/* open for writing (will overwrite if file exists) */
 
 	if (0 != err)
 	{
@@ -313,7 +313,7 @@ void bde_config_export(pBDEConfigEntry list, char *szFileName)
 		{
 			str = bde_fqn(current);
 
-			fprintf_s(stream, "%s = %s\n", str, current->value);
+			fprintf_s(f, "%s = %s\n", str, current->value);
 
 			free(str);
 		}
@@ -322,7 +322,7 @@ void bde_config_export(pBDEConfigEntry list, char *szFileName)
 	}
 
 	/* close stream */
-	if ((stream) && (fclose(stream)))
+	if ((f) && (fclose(f)))
 		printf_s("Error in bde_config_export(): the file was not closed\n");
 }
 
@@ -350,7 +350,7 @@ void bde_config_free(pBDEConfigEntry list)	/* free all memory allocated for link
 
 
 /* write string to file, BDE way */
-void bde_fputs(char *str, FILE *stream)
+void bde_fputs(char *str, FILE *f)
 {
 	if (!str)
 	{
@@ -358,16 +358,16 @@ void bde_fputs(char *str, FILE *stream)
 		return;
 	}
 
-	fputc(BDE_NUL, stream);	/* write lead zero */
-	fputs(str, stream);	/* write the string */
-	fputc(BDE_NUL, stream);	/* write trail zero */
+	fputc(BDE_NUL, f);	/* write lead zero */
+	fputs(str, f);		/* write the string */
+	fputc(BDE_NUL, f);	/* write trail zero */
 }
 
 
 /* write from linked list to BDE configuration file */
 void bde_config_write(pBDEConfigEntry list, char *szFileName)
 {
-	FILE *stream;
+	FILE *f;
 	errno_t err;
 	int ld, eob;
 	pBDEConfigEntry current, tmp_c, tmp_n;
@@ -375,7 +375,7 @@ void bde_config_write(pBDEConfigEntry list, char *szFileName)
 	/* Initialize current pointer */
 	current = list;
 	
-	err = fopen_s(&stream, szFileName, "w");	/* open for writing (will overwrite if file exists) */
+	err = fopen_s(&f, szFileName, "w");	/* open for writing (will overwrite if file exists) */
 
 	if (0 != err)
 	{
@@ -386,36 +386,36 @@ void bde_config_write(pBDEConfigEntry list, char *szFileName)
 	while (current)
 	{
 		/* start new line */
-		fputc(BDE_NEW, stream);
-		fputc(BDE_NUL, stream);
+		fputc(BDE_NEW, f);
+		fputc(BDE_NUL, f);
 
 		switch(current->entry_type)
 		{
 		case BDE_Container:
 			/* leading zero */
-			fputc(BDE_NUL, stream);
+			fputc(BDE_NUL, f);
 
 			/* put container name */
-			bde_fputs(current->name, stream);
+			bde_fputs(current->name, f);
 
 			/* trail with 1 and 0 */
-			fputc(BDE_VAR, stream);
-			fputc(BDE_NUL, stream);
+			fputc(BDE_VAR, f);
+			fputc(BDE_NUL, f);
 
 			break;
 
 		case BDE_Variable:
 			/* leading 1 */
-			fputc(BDE_VAR, stream);
+			fputc(BDE_VAR, f);
 
 			/* put variable name */
-			bde_fputs(current->name, stream);
+			bde_fputs(current->name, f);
 
 			/* put 'equals' */
-			fputc(BDE_EQU, stream);
+			fputc(BDE_EQU, f);
 
 			/* put variable value */
-			bde_fputs(current->value, stream);
+			bde_fputs(current->value, f);
 
 			break;
 
@@ -463,8 +463,8 @@ void bde_config_write(pBDEConfigEntry list, char *szFileName)
 				
 			while (eob > 0)
 			{
-				fputc(BDE_EOB, stream);
-				fputc(BDE_NUL, stream);
+				fputc(BDE_EOB, f);
+				fputc(BDE_NUL, f);
 				eob--;
 			}
 		}
@@ -477,8 +477,8 @@ void bde_config_write(pBDEConfigEntry list, char *szFileName)
 
 			while (eob > 0)
 			{
-				fputc(BDE_EOB, stream);
-				fputc(BDE_NUL, stream);
+				fputc(BDE_EOB, f);
+				fputc(BDE_NUL, f);
 				eob--;
 			}
 		}
@@ -488,7 +488,7 @@ void bde_config_write(pBDEConfigEntry list, char *szFileName)
 	}
 
 	/* close stream */
-	if ((stream) && (fclose(stream)))
+	if ((f) && (fclose(f)))
 		printf_s("Error in bde_config_write(): the file was not closed\n");
 }
 
@@ -683,12 +683,12 @@ int bde_config_add_entry(pBDEConfigEntry list, char *szFQNPath, char *szName, ch
  */
 int bde_config_update(pBDEConfigEntry list, char *szFileName)
 {	
-	FILE *stream;
+	FILE *f;
 	errno_t err;
 	char buf[MAX_BUFFER], *szFQNPath, *szName, *szValue;
 	int i, change_no = 0;
 
-	err = fopen_s(&stream, szFileName, "r");	/* open for reading */
+	err = fopen_s(&f, szFileName, "r");	/* open for reading */
 
 	if (0 != err)
 	{
@@ -696,11 +696,11 @@ int bde_config_update(pBDEConfigEntry list, char *szFileName)
 		return 0;
 	}
 
-	while (!feof(stream))
+	while (!feof(f))
 	{
-		if (!fgets(buf, MAX_BUFFER - 1, stream))
+		if (!fgets(buf, MAX_BUFFER - 1, f))
 			/* we get here if fgets failed due to error or end of file */
-			if (ferror(stream))	/* check for error */
+			if (ferror(f))	/* check for error */
 			{
 				printf_s("Error in bde_config_export(): fgets() failed while reading from \"%s\"\n", szFileName);
 				return 0;
@@ -780,7 +780,7 @@ int bde_config_update(pBDEConfigEntry list, char *szFileName)
 	}
 
 	/* close stream */
-	if ((stream) && (fclose(stream)))
+	if ((f) && (fclose(f)))
 		printf_s("Error in bde_config_export(): the file was not closed\n");
 
 	return change_no;
@@ -797,9 +797,8 @@ int main(int argc, char *argv[])
 	{
 		printf_s("bdecli %s\thttp://oboroc.com/bdecli\n\n", PROGRAM_VERSION);
 		printf_s(
-			"How to use:\n\n"	\
-			"Export settings from idapi32.cfg: bdecli -e idapi32.cfg output.txt\n\n"
-			"Edit the text file, leaving only settings relevant to deployed application.\n\n"
+			"Export settings from idapi32.cfg: bdecli -e idapi32.cfg output.txt\n"
+			"Edit the text file, leaving only settings relevant to deployed application.\n"
 			"Import settings from edited text file: bdecli -i idapi32.cfg input.txt\n"
 			);
 		return 1;
