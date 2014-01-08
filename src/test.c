@@ -1,9 +1,11 @@
 
 #include <stdio.h>
 
-#if _MSC_VER < 1400
-#define fopen_s(FPP, FNAME, FMODE)	((int)((void *)(NULL) == (void *)((*FPP = fopen(FNAME, FMODE)))))
-#endif
+#include "vc6fix.h"
+
+//#if _MSC_VER < 1400
+//#define fopen_s(FPP, FNAME, FMODE)	((int)((void *)(NULL) == (void *)((*FPP = fopen(FNAME, FMODE)))))
+//#endif
 
 void test(char *filename)
 {
@@ -12,7 +14,6 @@ void test(char *filename)
 
 	printf("Attempting to write to file \"%s\"\n", filename);
 
-//	err = (int)(NULL == (f = fopen(filename, "wt")));
 	err = fopen_s(&f, filename, "wt");
 
 	printf("err = %d\n", err);
