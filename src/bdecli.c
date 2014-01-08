@@ -493,7 +493,7 @@ void bde_config_write(pBDEConfigEntry list, char *szFileName)
 }
 
 
-/* bde_conains() returns 1 if container is a parent of entry, 0 otherwise */
+/* bde_contains() returns 1 if container is a parent of entry, 0 otherwise */
 int bde_contains(pBDEConfigEntry co, pBDEConfigEntry entry)
 {
 	while (entry)
