@@ -10,13 +10,13 @@
 #include "vcfix.h"
 
 
-#define	PROGRAM_VERSION	"1.0.0001"
-#define MAX_BUFFER	10000
-#define BDE_NUL	0
-#define	BDE_VAR	1
-#define	BDE_EOB	2
-#define	BDE_NEW	3
-#define BDE_EQU	4
+#define PROGRAM_VERSION "1.0.0001"
+#define MAX_BUFFER 10000
+#define BDE_NUL 0
+#define BDE_VAR 1
+#define BDE_EOB 2
+#define BDE_NEW 3
+#define BDE_EQU 4
 
 
 typedef enum e_BDEEntryType {BDE_Undefined = 0, BDE_Container = 1, BDE_Variable = 2} tBDEEntryType;
