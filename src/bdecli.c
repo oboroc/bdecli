@@ -50,7 +50,7 @@ char *bde_fgets(FILE *stream)
 	{
 		/* build string in heap buffer */
 		ch = fgetc(stream);
-		buf[iStrSize] = ch;
+		buf[iStrSize] = (char)ch;
 
 		iStrSize++;
 
@@ -427,7 +427,7 @@ void bde_config_write(pBDEConfigEntry list, char *szFileName)
 
 		/* check if we should put the 'end of container' byte sequence */
 		if ((current->next) &&						/* there is a next entry */
-			(current->entry_type == BDE_Variable) &&		/* current entry is a variable */
+			(BDE_Variable == current->entry_type) &&		/* current entry is a variable */
 			(current->container != current->next->container))	/* and it has a different container */
 		{
 			eob = 0;
@@ -519,7 +519,7 @@ int bde_config_add_entry(pBDEConfigEntry list, char *szFQNPath, char *szName, ch
 	int i;
 	size_t buflen;
 
-	if (list->entry_type != BDE_Container)	/* sanitize list */
+	if (BDE_Container != list->entry_type)	/* sanitize list */
 	{
 		printf_s("Error in bde_config_add_entry(): first entry in linked list is not a container\n");
 		return 0;
