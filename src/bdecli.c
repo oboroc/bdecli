@@ -7,10 +7,10 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include "vc6fix.h"
+#include "vcfix.h"
 
 
-#define	PROGRAM_VERSION	"1.0.0"
+#define	PROGRAM_VERSION	"1.0.0001"
 #define MAX_BUFFER	10000
 #define BDE_NUL	0
 #define	BDE_VAR	1
@@ -794,7 +794,7 @@ int main(int argc, char *argv[])
 
 	if (1 == argc)
 	{
-		printf_s("bdecli %s\thttp://oboroc.com/bdecli\n\n", PROGRAM_VERSION);
+		printf_s("bdecli %s (c) 2010, 2014 Adrian Oboroc http://oboroc.com/bdecli (%s)\n\n", PROGRAM_VERSION, __DATE__);
 		printf_s(
 			"Export settings from idapi32.cfg: bdecli -e idapi32.cfg output.txt\n"
 			"Edit the text file, leaving only settings relevant to deployed application.\n"
