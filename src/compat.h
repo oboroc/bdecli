@@ -24,7 +24,7 @@
 #ifndef COMPAT_H
 #define COMPAT_H
 
-#if ((_MSC_VER < 1400) || (__WATCOMC__))	/* Check if compiler is Visual C++ version is below 2005 or any version of Watcom C/C++ */
+#if ((_MSC_VER && (_MSC_VER < 1400)) || (__WATCOMC__))	/* Check if compiler is Visual C++ version is below 2005 or any version of Watcom C/C++ */
 
 #define fopen_s(FPP, FNAME, FMODE)	((int)((void *)(NULL) == (void *)((*FPP = fopen(FNAME, FMODE)))))
 
@@ -38,6 +38,6 @@
 #define printf_s	printf
 #define sprintf_s	sprintf
 
-#endif	/* ((_MSC_VER < 1400) || (__WATCOMC__)) */
+#endif	/* ((_MSC_VER && (_MSC_VER < 1400)) || (__WATCOMC__)) */
 
 #endif	/* COMPAT_H */
