@@ -1,4 +1,4 @@
-/* bdecli - Borland Database command-line interface tool.
+/* bdecli - Borland Database command-line interface.
  * 
  * Copyright (C) 2014 Adrian Oboroc
  *  
