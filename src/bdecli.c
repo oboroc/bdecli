@@ -1,3 +1,26 @@
+/* bdecli - Borland Database command-line interface tool.
+ * 
+ * Copyright (C) 2014 Adrian Oboroc
+ *  
+ * This file is part of bdecli project <https://github.com/oboroc/bdecli/>.
+ * 
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
 
@@ -7,10 +30,10 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include "vcfix.h"
+#include "compat.h"
 
 
-#define PROGRAM_VERSION "1.0.0001"
+#define PROGRAM_VERSION "1.0.0002"
 #define MAX_BUFFER 10000
 #define BDE_NUL 0
 #define BDE_VAR 1
