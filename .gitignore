@@ -214,6 +214,6 @@ pip-log.txt
 #Mr Developer
 .mr.developer.cfg
 
-#bdecli custom exclusions
+#custom exclusions
 *.err
 *.exe

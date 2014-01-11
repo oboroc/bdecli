@@ -30,9 +30,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include "compat.h"
-//#include "uthash.h"	/* included from fork of https://github.com/troydhanson/uthash */
-
+#include "compat_s.h"
 
 #define BDECLI_VER "1.0.3"
 #define MAX_BUFFER 10000
