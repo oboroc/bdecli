@@ -31,7 +31,7 @@
 #include <errno.h>
 
 #include "compat.h"
-#include "uthash.h"	/* included from fork of https://github.com/troydhanson/uthash */
+//#include "uthash.h"	/* included from fork of https://github.com/troydhanson/uthash */
 
 
 #define BDECLI_VER "1.0.3"
