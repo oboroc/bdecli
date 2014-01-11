@@ -31,6 +31,7 @@
 #include <errno.h>
 
 #include "compat.h"
+#include "../../uthash/src/uthash.h"	/* included from fork of https://github.com/troydhanson/uthash */
 
 
 #define PROGRAM_VERSION "1.0.0002"
