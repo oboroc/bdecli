@@ -34,7 +34,7 @@
 #include "uthash.h"	/* included from fork of https://github.com/troydhanson/uthash */
 
 
-#define PROGRAM_VERSION "1.0.0002"
+#define PROGRAM_VERSION "1.0.3"
 #define MAX_BUFFER 10000
 #define BDE_NUL 0
 #define BDE_VAR 1
@@ -43,14 +43,19 @@
 #define BDE_EQU 4
 
 
-typedef enum e_BDEEntryType {BDE_Undefined = 0, BDE_Container = 1, BDE_Variable = 2} tBDEEntryType;
-
-typedef struct bdecfg_entry_t
+typedef enum bde_entry_type
 {
-	tBDEEntryType entry_type;	/* entry type */
-	char *name, *value;		/* entry name and value */
-	struct bdecfg_entry_t *next, *previous, *container;	/* linked list and container pointers */
-} bdecfg_entry_t;
+	BDE_UNDEFINED = 0,
+	BDE_CONTAINER = 1,
+	BDE_VARIABLE = 2
+} bde_entry_type;
+
+typedef struct bde_entry_t
+{
+	bde_entry_type entry_type;				/* entry type */
+	char *name, *value;					/* entry name and value */
+	struct bde_entry_t *next, *previous, *container;	/* linked list and container pointers */
+} bde_entry_t;
 
 
 char *bde_fgets(FILE *f)
@@ -110,19 +115,19 @@ char *bde_fgets(FILE *f)
 	return str;
 }
 
-bdecfg_entry_t* bde_new_entry(bdecfg_entry_t *prev, bdecfg_entry_t *cont)
+bde_entry_t* bde_new_entry(bde_entry_t *prev, bde_entry_t *cont)
 {
-	bdecfg_entry_t *entry;
+	bde_entry_t *entry;
 
-	entry = (bdecfg_entry_t*)malloc(sizeof(bdecfg_entry_t));
+	entry = (bde_entry_t*)malloc(sizeof(bde_entry_t));
 
 	if (!entry)
 	{
-		printf_s("Error in bde_new_entry(): failed to allocate %i bytes of memory for linked list entry\n", sizeof(bdecfg_entry_t));
+		printf_s("Error in bde_new_entry(): failed to allocate %i bytes of memory for linked list entry\n", sizeof(bde_entry_t));
 		return NULL;
 	}
 
-	memset(entry, 0, sizeof(bdecfg_entry_t));	/* set everything to zero/null */
+	memset(entry, 0, sizeof(bde_entry_t));	/* set everything to zero/null */
 
 	entry->previous = prev;
 	entry->container = cont;	/* by default, use container from previous linked list entry */
@@ -133,12 +138,12 @@ bdecfg_entry_t* bde_new_entry(bdecfg_entry_t *prev, bdecfg_entry_t *cont)
 	return entry;
 }
 
-bdecfg_entry_t* bde_cfg_parse(char *szFileName)
+bde_entry_t* bde_cfg_parse(char *szFileName)
 {
 	FILE *f;
 	int err, ch;
 	char *str, *value;
-	bdecfg_entry_t *start, *current;
+	bde_entry_t *start, *current;
 
 	/* Initialize start and current pointers */
 	start = bde_new_entry(NULL, NULL);
@@ -193,7 +198,7 @@ bdecfg_entry_t* bde_cfg_parse(char *szFileName)
 				return NULL;
 			}
 
-			current->entry_type = BDE_Container;
+			current->entry_type = BDE_CONTAINER;
 			current->name = str;
 			current = bde_new_entry(current, current);	/* spawn a new linked list entry */
 
@@ -218,7 +223,7 @@ bdecfg_entry_t* bde_cfg_parse(char *szFileName)
 				return NULL;
 			}
 
-			current->entry_type = BDE_Variable;
+			current->entry_type = BDE_VARIABLE;
 			current->name = str;
 			current->value = value;
 
@@ -269,9 +274,9 @@ bdecfg_entry_t* bde_cfg_parse(char *szFileName)
 }
 
 /* build and return a fully qualified hierarchical name of entry */
-char* bde_fqn(bdecfg_entry_t *entry)
+char* bde_fqn(bde_entry_t *entry)
 {
-	bdecfg_entry_t *current;
+	bde_entry_t *current;
 	char tmp[MAX_BUFFER], *str;
 	char buf[MAX_BUFFER] = "";	/* initialize buffer with empty string */
 
@@ -298,7 +303,7 @@ char* bde_fqn(bdecfg_entry_t *entry)
 }
 
 
-int bde_containers(bdecfg_entry_t *entry)
+int bde_containers(bde_entry_t *entry)
 {
 	int count;
 
@@ -314,11 +319,11 @@ int bde_containers(bdecfg_entry_t *entry)
 }
 
 
-void bde_cfg_export(bdecfg_entry_t *list, char *szFileName)
+void bde_cfg_export(bde_entry_t *list, char *szFileName)
 {
 	FILE *f;
 	int err;
-	bdecfg_entry_t *current;
+	bde_entry_t *current;
 	char *str;
 
 	/* Initialize current pointer */
@@ -334,7 +339,7 @@ void bde_cfg_export(bdecfg_entry_t *list, char *szFileName)
 
 	while (current)
 	{
-		if (BDE_Variable == current->entry_type)
+		if (BDE_VARIABLE == current->entry_type)
 		{
 			str = bde_fqn(current);
 
@@ -352,9 +357,9 @@ void bde_cfg_export(bdecfg_entry_t *list, char *szFileName)
 }
 
 
-void bde_cfg_free(bdecfg_entry_t *list)	/* free all memory allocated for linked list */
+void bde_cfg_free(bde_entry_t *list)	/* free all memory allocated for linked list */
 {
-	bdecfg_entry_t *item, *tmp;
+	bde_entry_t *item, *tmp;
 
 	item = list;
 
@@ -390,11 +395,11 @@ void bde_fputs(char *str, FILE *f)
 
 
 /* write from linked list to BDE configuration file */
-void bde_cfg_write(bdecfg_entry_t *list, char *szFileName)
+void bde_cfg_write(bde_entry_t *list, char *szFileName)
 {
 	FILE *f;
 	int err, ld, eob;
-	bdecfg_entry_t *current, *tmp_c, *tmp_n;
+	bde_entry_t *current, *tmp_c, *tmp_n;
 
 	/* Initialize current pointer */
 	current = list;
@@ -415,7 +420,7 @@ void bde_cfg_write(bdecfg_entry_t *list, char *szFileName)
 
 		switch(current->entry_type)
 		{
-		case BDE_Container:
+		case BDE_CONTAINER:
 			/* leading zero */
 			fputc(BDE_NUL, f);
 
@@ -428,7 +433,7 @@ void bde_cfg_write(bdecfg_entry_t *list, char *szFileName)
 
 			break;
 
-		case BDE_Variable:
+		case BDE_VARIABLE:
 			/* leading 1 */
 			fputc(BDE_VAR, f);
 
@@ -445,13 +450,13 @@ void bde_cfg_write(bdecfg_entry_t *list, char *szFileName)
 
 		default:
 			printf_s("Error in bde_cfg_write(): invalid list entry. Expected %i or %i, actual value is %i\n",
-				BDE_Container, BDE_Variable, current->entry_type);
+				BDE_CONTAINER, BDE_VARIABLE, current->entry_type);
 			return;
 		}
 
 		/* check if we should put the 'end of container' byte sequence */
 		if ((current->next) &&						/* there is a next entry */
-			(BDE_Variable == current->entry_type) &&		/* current entry is a variable */
+			(BDE_VARIABLE == current->entry_type) &&		/* current entry is a variable */
 			(current->container != current->next->container))	/* and it has a different container */
 		{
 			eob = 0;
@@ -518,7 +523,7 @@ void bde_cfg_write(bdecfg_entry_t *list, char *szFileName)
 
 
 /* bde_contains() returns 1 if container is a parent of entry, 0 otherwise */
-int bde_contains(bdecfg_entry_t *co, bdecfg_entry_t *entry)
+int bde_contains(bde_entry_t *co, bde_entry_t *entry)
 {
 	while (entry)
 	{
@@ -536,14 +541,14 @@ int bde_contains(bdecfg_entry_t *co, bdecfg_entry_t *entry)
  *	bde_cfg_add_entry() will create it. Return 1 if variable was created or modified,
  *	0 otherwise.
 */
-int bde_cfg_add_entry(bdecfg_entry_t *list, char *szFQNPath, char *szName, char *szValue)
+int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *szValue)
 {
-	bdecfg_entry_t *current, *parcon, *co, *tmp_e;
+	bde_entry_t *current, *parcon, *co, *tmp_e;
 	char buf[MAX_BUFFER], *tmp;
 	int i;
 	size_t buflen;
 
-	if (BDE_Container != list->entry_type)	/* sanitize list */
+	if (BDE_CONTAINER != list->entry_type)	/* sanitize list */
 	{
 		printf_s("Error in bde_cfg_add_entry(): first entry in linked list is not a container\n");
 		return 0;
@@ -577,7 +582,7 @@ int bde_cfg_add_entry(bdecfg_entry_t *list, char *szFQNPath, char *szName, char 
 			specific name and same parent container */
 			while (current)
 			{
-				if ((BDE_Container == current->entry_type) &&
+				if ((BDE_CONTAINER == current->entry_type) &&
 					(current->container == parcon))
 					if (0 == strcmp(current->name, buf))	/* case-sensitive comparison */
 					{
@@ -603,7 +608,7 @@ int bde_cfg_add_entry(bdecfg_entry_t *list, char *szFQNPath, char *szName, char 
 					return 0;
 				}
 
-				co->entry_type = BDE_Container;
+				co->entry_type = BDE_CONTAINER;
 
 				co->name = (char *)malloc(strlen(buf) + 1);	/* allocate memory for name */
 				if (!co->name)
@@ -631,7 +636,7 @@ int bde_cfg_add_entry(bdecfg_entry_t *list, char *szFQNPath, char *szName, char 
 	current = co->next;
 	while ((current) && (current->container == co))
 	{
-		if ((BDE_Variable == current->entry_type) &&
+		if ((BDE_VARIABLE == current->entry_type) &&
 			(0 == strcmp(current->name, szName)))	/* case-sensitive comparison */
 		{
 			/* found variable, compare it's value to new value */
@@ -673,7 +678,7 @@ int bde_cfg_add_entry(bdecfg_entry_t *list, char *szFQNPath, char *szName, char 
 		return 0;
 	}
 
-	current->entry_type = BDE_Variable;
+	current->entry_type = BDE_VARIABLE;
 
 	current->name = (char *)malloc(strlen(szName) + 1);	/* allocate memory for name */
 	if (!current->name)
@@ -705,7 +710,7 @@ int bde_cfg_add_entry(bdecfg_entry_t *list, char *szFQNPath, char *szName, char 
  *	calls bde_cfg_add_entry() to update linked list, if necessary.
  *	 bde_cfg_update() returns a total number of updated and added entries.
  */
-int bde_cfg_update(bdecfg_entry_t *list, char *szFileName)
+int bde_cfg_update(bde_entry_t *list, char *szFileName)
 {	
 	FILE *f;
 	int err, i, change_no = 0;
@@ -812,7 +817,7 @@ int bde_cfg_update(bdecfg_entry_t *list, char *szFileName)
 
 int main(int argc, char *argv[])
 {
-	bdecfg_entry_t *cfg;
+	bde_entry_t *cfg;
 	int change_no;
 	cfg = NULL;
 
