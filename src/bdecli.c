@@ -1,6 +1,6 @@
 /* bdecli - Borland Database command-line interface.
  * 
- * Copyright (C) 2014 Adrian Oboroc
+ * Copyright (C) 2010, 2014 Adrian Oboroc
  *  
  * This file is part of bdecli project <https://github.com/oboroc/bdecli/>.
  * 
@@ -31,7 +31,7 @@
 #include <errno.h>
 
 #include "compat.h"
-#include "../../uthash/src/uthash.h"	/* included from fork of https://github.com/troydhanson/uthash */
+#include "uthash.h"	/* included from fork of https://github.com/troydhanson/uthash */
 
 
 #define PROGRAM_VERSION "1.0.0002"
@@ -45,12 +45,12 @@
 
 typedef enum e_BDEEntryType {BDE_Undefined = 0, BDE_Container = 1, BDE_Variable = 2} tBDEEntryType;
 
-typedef struct s_BDEConfigEntry
+typedef struct bdecfg_entry_t
 {
 	tBDEEntryType entry_type;	/* entry type */
 	char *name, *value;		/* entry name and value */
-	struct s_BDEConfigEntry *next, *previous, *container;	/* linked list and container pointers */
-} tBDEConfigEntry, *pBDEConfigEntry;
+	struct bdecfg_entry_t *next, *previous, *container;	/* linked list and container pointers */
+} bdecfg_entry_t;
 
 
 char *bde_fgets(FILE *f)
@@ -110,19 +110,19 @@ char *bde_fgets(FILE *f)
 	return str;
 }
 
-pBDEConfigEntry bde_new_entry(pBDEConfigEntry prev, pBDEConfigEntry cont)
+bdecfg_entry_t* bde_new_entry(bdecfg_entry_t *prev, bdecfg_entry_t *cont)
 {
-	pBDEConfigEntry entry;
+	bdecfg_entry_t *entry;
 
-	entry = (pBDEConfigEntry)malloc(sizeof(tBDEConfigEntry));
+	entry = (bdecfg_entry_t*)malloc(sizeof(bdecfg_entry_t));
 
 	if (!entry)
 	{
-		printf_s("Error in bde_new_entry(): failed to allocate %i bytes of memory for linked list entry\n", sizeof(tBDEConfigEntry));
+		printf_s("Error in bde_new_entry(): failed to allocate %i bytes of memory for linked list entry\n", sizeof(bdecfg_entry_t));
 		return NULL;
 	}
 
-	memset(entry, 0, sizeof(tBDEConfigEntry));	/* set everything to zero/null */
+	memset(entry, 0, sizeof(bdecfg_entry_t));	/* set everything to zero/null */
 
 	entry->previous = prev;
 	entry->container = cont;	/* by default, use container from previous linked list entry */
@@ -133,12 +133,12 @@ pBDEConfigEntry bde_new_entry(pBDEConfigEntry prev, pBDEConfigEntry cont)
 	return entry;
 }
 
-pBDEConfigEntry bde_config_parse(char *szFileName)
+bdecfg_entry_t* bde_cfg_parse(char *szFileName)
 {
 	FILE *f;
 	int err, ch;
 	char *str, *value;
-	pBDEConfigEntry start, current;
+	bdecfg_entry_t *start, *current;
 
 	/* Initialize start and current pointers */
 	start = bde_new_entry(NULL, NULL);
@@ -148,7 +148,7 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 
 	if (0 != err)
 	{
-		printf_s("Error in bde_config_parse(): file \"%s\" was not opened\n", szFileName);
+		printf_s("Error in bde_cfg_parse(): file \"%s\" was not opened\n", szFileName);
 		return NULL;
 	}
 
@@ -158,14 +158,14 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 	{
 		if (BDE_NEW != ch)
 		{
-			printf_s("Error in bde_config_parse(): unexpected byte at the beginning of line. Expected %i, actual value is %i\n", BDE_NEW, ch);
+			printf_s("Error in bde_cfg_parse(): unexpected byte at the beginning of line. Expected %i, actual value is %i\n", BDE_NEW, ch);
 			return NULL;
 		}
 
 		ch = fgetc(f);
 		if (BDE_NUL != ch)
 		{
-			printf_s("Error in bde_config_parse(): unexpected second byte at the beginning of line. Expected %i, actual value %i\n", BDE_NUL, ch); 
+			printf_s("Error in bde_cfg_parse(): unexpected second byte at the beginning of line. Expected %i, actual value %i\n", BDE_NUL, ch); 
 			return NULL;
 		}
 
@@ -182,14 +182,14 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 			ch = fgetc(f);
 			if (BDE_VAR != ch)
 			{
-				printf_s("Error in bde_config_parse(): unexpected byte at the end of contrainer name. Expected %i, actual value is %i\n", BDE_VAR, ch);
+				printf_s("Error in bde_cfg_parse(): unexpected byte at the end of contrainer name. Expected %i, actual value is %i\n", BDE_VAR, ch);
 				return NULL;
 			}
 					
 			ch = fgetc(f);
 			if (BDE_NUL != ch)
 			{
-				printf_s("Error in bde_config_parse(): unexpected second byte after the end of contrainer name. Expected %i, actual value is %i\n", BDE_NUL, ch);
+				printf_s("Error in bde_cfg_parse(): unexpected second byte after the end of contrainer name. Expected %i, actual value is %i\n", BDE_NUL, ch);
 				return NULL;
 			}
 
@@ -206,7 +206,7 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 			ch = fgetc(f);
 			if (BDE_EQU != ch)
 			{
-				printf_s("Error in bde_config_parse(): unexpected byte between variable name and value. Expected %i, actual value %i\n", BDE_EQU, ch); 
+				printf_s("Error in bde_cfg_parse(): unexpected byte between variable name and value. Expected %i, actual value %i\n", BDE_EQU, ch); 
 				return NULL;
 			}
 
@@ -214,7 +214,7 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 
 			if (!value)
 			{
-				printf_s("Error in bde_config_parse(): failed to parse the value of variable\n");
+				printf_s("Error in bde_cfg_parse(): failed to parse the value of variable\n");
 				return NULL;
 			}
 
@@ -228,7 +228,7 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 
 		default:
 
-			printf_s("Error in bde_config_parse(): unexpected byte in main parser loop: %i", ch);
+			printf_s("Error in bde_cfg_parse(): unexpected byte in main parser loop: %i", ch);
 			return NULL;
 
 		}
@@ -248,7 +248,7 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 
 				if (BDE_NUL != ch)
 				{
-					printf_s("Error in bde_config_parse(): unexpected byte at the end of line. Expected %i, actual value is %i\n", BDE_NUL, ch);
+					printf_s("Error in bde_cfg_parse(): unexpected byte at the end of line. Expected %i, actual value is %i\n", BDE_NUL, ch);
 					return NULL;
 				}
 			}
@@ -263,15 +263,15 @@ pBDEConfigEntry bde_config_parse(char *szFileName)
 
 	/* close stream */
 	if ((f) && (fclose(f)))
-		printf_s("Error in bde_config_parse(): the file was not closed\n");
+		printf_s("Error in bde_cfg_parse(): the file was not closed\n");
 
 	return start;
 }
 
 /* build and return a fully qualified hierarchical name of entry */
-char *bde_fqn(pBDEConfigEntry entry)
+char* bde_fqn(bdecfg_entry_t *entry)
 {
-	pBDEConfigEntry current;
+	bdecfg_entry_t *current;
 	char tmp[MAX_BUFFER], *str;
 	char buf[MAX_BUFFER] = "";	/* initialize buffer with empty string */
 
@@ -298,7 +298,7 @@ char *bde_fqn(pBDEConfigEntry entry)
 }
 
 
-int bde_containers(pBDEConfigEntry entry)
+int bde_containers(bdecfg_entry_t *entry)
 {
 	int count;
 
@@ -314,11 +314,11 @@ int bde_containers(pBDEConfigEntry entry)
 }
 
 
-void bde_config_export(pBDEConfigEntry list, char *szFileName)
+void bde_cfg_export(bdecfg_entry_t *list, char *szFileName)
 {
 	FILE *f;
 	int err;
-	pBDEConfigEntry current;
+	bdecfg_entry_t *current;
 	char *str;
 
 	/* Initialize current pointer */
@@ -328,7 +328,7 @@ void bde_config_export(pBDEConfigEntry list, char *szFileName)
 
 	if (0 != err)
 	{
-		printf_s("Error in bde_config_export(): file \"%s\" was not opened\n", szFileName);
+		printf_s("Error in bde_cfg_export(): file \"%s\" was not opened\n", szFileName);
 		return;
 	}
 
@@ -348,13 +348,13 @@ void bde_config_export(pBDEConfigEntry list, char *szFileName)
 
 	/* close stream */
 	if ((f) && (fclose(f)))
-		printf_s("Error in bde_config_export(): the file was not closed\n");
+		printf_s("Error in bde_cfg_export(): the file was not closed\n");
 }
 
 
-void bde_config_free(pBDEConfigEntry list)	/* free all memory allocated for linked list */
+void bde_cfg_free(bdecfg_entry_t *list)	/* free all memory allocated for linked list */
 {
-	pBDEConfigEntry item, tmp;
+	bdecfg_entry_t *item, *tmp;
 
 	item = list;
 
@@ -390,11 +390,11 @@ void bde_fputs(char *str, FILE *f)
 
 
 /* write from linked list to BDE configuration file */
-void bde_config_write(pBDEConfigEntry list, char *szFileName)
+void bde_cfg_write(bdecfg_entry_t *list, char *szFileName)
 {
 	FILE *f;
 	int err, ld, eob;
-	pBDEConfigEntry current, tmp_c, tmp_n;
+	bdecfg_entry_t *current, *tmp_c, *tmp_n;
 
 	/* Initialize current pointer */
 	current = list;
@@ -403,7 +403,7 @@ void bde_config_write(pBDEConfigEntry list, char *szFileName)
 
 	if (0 != err)
 	{
-		printf_s("Error in bde_config_write(): file \"%s\" was not opened\n", szFileName);
+		printf_s("Error in bde_cfg_write(): file \"%s\" was not opened\n", szFileName);
 		return;
 	}
 
@@ -444,7 +444,7 @@ void bde_config_write(pBDEConfigEntry list, char *szFileName)
 			break;
 
 		default:
-			printf_s("Error in bde_config_write(): invalid list entry. Expected %i or %i, actual value is %i\n",
+			printf_s("Error in bde_cfg_write(): invalid list entry. Expected %i or %i, actual value is %i\n",
 				BDE_Container, BDE_Variable, current->entry_type);
 			return;
 		}
@@ -513,12 +513,12 @@ void bde_config_write(pBDEConfigEntry list, char *szFileName)
 
 	/* close stream */
 	if ((f) && (fclose(f)))
-		printf_s("Error in bde_config_write(): the file was not closed\n");
+		printf_s("Error in bde_cfg_write(): the file was not closed\n");
 }
 
 
 /* bde_contains() returns 1 if container is a parent of entry, 0 otherwise */
-int bde_contains(pBDEConfigEntry co, pBDEConfigEntry entry)
+int bde_contains(bdecfg_entry_t *co, bdecfg_entry_t *entry)
 {
 	while (entry)
 	{
@@ -530,22 +530,22 @@ int bde_contains(pBDEConfigEntry co, pBDEConfigEntry entry)
 }
 
 /*
- *	bde_config_add_entry() checks if proper container exists, if not, creates it.
+ *	bde_cfg_add_entry() checks if proper container exists, if not, creates it.
  *	within that container, it looks for variable with supplied name, if it exists and
- *	has different value, bde_config_add_entry() will update it. If variable doesn't exist
- *	bde_config_add_entry() will create it. Return 1 if variable was created or modified,
+ *	has different value, bde_cfg_add_entry() will update it. If variable doesn't exist
+ *	bde_cfg_add_entry() will create it. Return 1 if variable was created or modified,
  *	0 otherwise.
 */
-int bde_config_add_entry(pBDEConfigEntry list, char *szFQNPath, char *szName, char *szValue)
+int bde_cfg_add_entry(bdecfg_entry_t *list, char *szFQNPath, char *szName, char *szValue)
 {
-	pBDEConfigEntry current, parcon, co, tmp_e;
+	bdecfg_entry_t *current, *parcon, *co, *tmp_e;
 	char buf[MAX_BUFFER], *tmp;
 	int i;
 	size_t buflen;
 
 	if (BDE_Container != list->entry_type)	/* sanitize list */
 	{
-		printf_s("Error in bde_config_add_entry(): first entry in linked list is not a container\n");
+		printf_s("Error in bde_cfg_add_entry(): first entry in linked list is not a container\n");
 		return 0;
 	}
 
@@ -561,7 +561,7 @@ int bde_config_add_entry(pBDEConfigEntry list, char *szFQNPath, char *szName, ch
 		{
 			if (i > MAX_BUFFER)	/* sanitize possible buffer overflow */
 			{
-				printf_s("Error in bde_config_add_entry(): string buffer is too small");
+				printf_s("Error in bde_cfg_add_entry(): string buffer is too small");
 				return 0;
 			}
 
@@ -599,7 +599,7 @@ int bde_config_add_entry(pBDEConfigEntry list, char *szFQNPath, char *szName, ch
 				co = bde_new_entry(current, parcon);	/* create new entry */
 				if (!co)
 				{
-					printf_s("Error in bde_config_add_entry(): malloc() failed while creating new container\n");
+					printf_s("Error in bde_cfg_add_entry(): malloc() failed while creating new container\n");
 					return 0;
 				}
 
@@ -608,7 +608,7 @@ int bde_config_add_entry(pBDEConfigEntry list, char *szFQNPath, char *szName, ch
 				co->name = (char *)malloc(strlen(buf) + 1);	/* allocate memory for name */
 				if (!co->name)
 				{
-					printf_s("Error in bde_config_add_entry(): malloc() failed while creating new container name\n");
+					printf_s("Error in bde_cfg_add_entry(): malloc() failed while creating new container name\n");
 					return 0;
 				}
 				strcpy_s(co->name, strlen(buf) + 1, buf);
@@ -647,7 +647,7 @@ int bde_config_add_entry(pBDEConfigEntry list, char *szFQNPath, char *szName, ch
 					current->value = (char *)malloc(buflen);	/* realloc didn't work */
 					if (!current->value)	/* sanitize for realloc failure */
 					{
-						printf_s("Error in bde_config_add_entry(): realloc() failed\n");
+						printf_s("Error in bde_cfg_add_entry(): realloc() failed\n");
 						return 0;
 					}
 				}
@@ -669,7 +669,7 @@ int bde_config_add_entry(pBDEConfigEntry list, char *szFQNPath, char *szName, ch
 	current = bde_new_entry(current, co);	/* create new entry */
 	if (!current)
 	{
-		printf_s("Error in bde_config_add_entry(): malloc() failed while creating new variable\n");
+		printf_s("Error in bde_cfg_add_entry(): malloc() failed while creating new variable\n");
 		return 0;
 	}
 
@@ -678,7 +678,7 @@ int bde_config_add_entry(pBDEConfigEntry list, char *szFQNPath, char *szName, ch
 	current->name = (char *)malloc(strlen(szName) + 1);	/* allocate memory for name */
 	if (!current->name)
 	{
-		printf_s("Error in bde_config_add_entry(): malloc() failed while creating new variable name\n");
+		printf_s("Error in bde_cfg_add_entry(): malloc() failed while creating new variable name\n");
 		return 0;
 	}
 	strcpy_s(current->name, strlen(szName) + 1, szName);
@@ -686,7 +686,7 @@ int bde_config_add_entry(pBDEConfigEntry list, char *szFQNPath, char *szName, ch
 	current->value = (char *)malloc(strlen(szValue) + 1);	/* allocate memory for value */
 	if (!current->value)
 	{
-		printf_s("Error in bde_config_add_entry(): malloc() failed while creating new variable value\n");
+		printf_s("Error in bde_cfg_add_entry(): malloc() failed while creating new variable value\n");
 		return 0;
 	}
 	strcpy_s(current->value, strlen(szValue) + 1, szValue);
@@ -700,12 +700,12 @@ int bde_config_add_entry(pBDEConfigEntry list, char *szFQNPath, char *szName, ch
 }
 
 /*
- *	bde_config_update() parses text file one line at a time,
+ *	bde_cfg_update() parses text file one line at a time,
  *	extracts FQN path, variable name and variable value and
- *	calls bde_config_add_entry() to update linked list, if necessary.
- *	 bde_config_update() returns a total number of updated and added entries.
+ *	calls bde_cfg_add_entry() to update linked list, if necessary.
+ *	 bde_cfg_update() returns a total number of updated and added entries.
  */
-int bde_config_update(pBDEConfigEntry list, char *szFileName)
+int bde_cfg_update(bdecfg_entry_t *list, char *szFileName)
 {	
 	FILE *f;
 	int err, i, change_no = 0;
@@ -715,7 +715,7 @@ int bde_config_update(pBDEConfigEntry list, char *szFileName)
 
 	if (0 != err)
 	{
-		printf_s("Error in bde_config_export(): file \"%s\" was not opened\n", szFileName);
+		printf_s("Error in bde_cfg_export(): file \"%s\" was not opened\n", szFileName);
 		return 0;
 	}
 
@@ -725,7 +725,7 @@ int bde_config_update(pBDEConfigEntry list, char *szFileName)
 			/* we get here if fgets failed due to error or end of file */
 			if (ferror(f))	/* check for error */
 			{
-				printf_s("Error in bde_config_export(): fgets() failed while reading from \"%s\"\n", szFileName);
+				printf_s("Error in bde_cfg_export(): fgets() failed while reading from \"%s\"\n", szFileName);
 				return 0;
 			}
 			else
@@ -751,7 +751,7 @@ int bde_config_update(pBDEConfigEntry list, char *szFileName)
 		/* sanitize for '=' presense */
 		if (szFQNPath[i] != '=')
 		{
-			printf_s("Error in bde_config_export(): no '=' in line %s from file %s\n", buf, szFileName);
+			printf_s("Error in bde_cfg_export(): no '=' in line %s from file %s\n", buf, szFileName);
 			return 0;
 		}
 
@@ -779,7 +779,7 @@ int bde_config_update(pBDEConfigEntry list, char *szFileName)
 
 		if ('\\' != szFQNPath[i])
 		{
-			printf_s("Error in bde_config_export(): failed to find '\\' in '%s'\n", szFQNPath);
+			printf_s("Error in bde_cfg_export(): failed to find '\\' in '%s'\n", szFQNPath);
 			return 0;
 		}
 
@@ -799,12 +799,12 @@ int bde_config_update(pBDEConfigEntry list, char *szFileName)
 		}
 
 		/* add new entry to linked list, based on FQN path, variable name and variable value */
-		change_no += bde_config_add_entry(list, szFQNPath, szName, szValue);
+		change_no += bde_cfg_add_entry(list, szFQNPath, szName, szValue);
 	}
 
 	/* close stream */
 	if ((f) && (fclose(f)))
-		printf_s("Error in bde_config_export(): the file was not closed\n");
+		printf_s("Error in bde_cfg_export(): the file was not closed\n");
 
 	return change_no;
 }
@@ -812,7 +812,7 @@ int bde_config_update(pBDEConfigEntry list, char *szFileName)
 
 int main(int argc, char *argv[])
 {
-	pBDEConfigEntry cfg;
+	bdecfg_entry_t *cfg;
 	int change_no;
 	cfg = NULL;
 
@@ -844,11 +844,11 @@ int main(int argc, char *argv[])
 	case 'i':
 	case 'I':
 		printf_s("Importing configuration from %s to %s\n", argv[3], argv[2]);
-		cfg = bde_config_parse(argv[2]);
-		change_no = bde_config_update(cfg, argv[3]);
+		cfg = bde_cfg_parse(argv[2]);
+		change_no = bde_cfg_update(cfg, argv[3]);
 		if (change_no)
 		{
-			bde_config_write(cfg, argv[2]);
+			bde_cfg_write(cfg, argv[2]);
 			printf_s("%i change(s) applied to %s\n", change_no, argv[2]);
 		}
 		else
@@ -858,8 +858,8 @@ int main(int argc, char *argv[])
 	case 'e':
 	case 'E':
 		printf_s("Exporting configuration from %s to %s\n", argv[2], argv[3]);
-		cfg = bde_config_parse(argv[2]);
-		bde_config_export(cfg, argv[3]);
+		cfg = bde_cfg_parse(argv[2]);
+		bde_cfg_export(cfg, argv[3]);
 		break;
 
 	default:
@@ -867,6 +867,6 @@ int main(int argc, char *argv[])
 		return 2;
 	}
 
-	bde_config_free(cfg);
+	bde_cfg_free(cfg);
 	return 0;
 }
