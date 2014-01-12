@@ -30,7 +30,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include "compat_s.h"
+#include "compat_s.h"	/* https://github.com/oboroc/compat_s/ */
 
 #define BDECLI_VER "1.0.3"
 #define MAX_BUFFER 10000
