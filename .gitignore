@@ -218,3 +218,5 @@ pip-log.txt
 *.i
 *.err
 *.exe
+*.output
+*.map
