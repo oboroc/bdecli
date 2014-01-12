@@ -215,5 +215,6 @@ pip-log.txt
 .mr.developer.cfg
 
 #custom exclusions
+*.i
 *.err
 *.exe
