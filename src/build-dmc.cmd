@@ -5,7 +5,7 @@ SET PATH=C:\dm\bin;%PATH%
 SET INCLUDE=C:\dm\include;..\..\compat_s\src
 set LIB=C:\dm\lib
 
-dmc.exe -A bdecli.c
+dmc.exe -A -r -w- bdecli.c
 
 if exist *.obj del *.obj
 if exist *.map del *.map
