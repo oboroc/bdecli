@@ -61,7 +61,7 @@ Start with a generic blank idapi32.cfg file. You can create one by deleting
 your current idapi32.cfg file, opening bdeadmin tool and saving default
 settings in new idapi32.cfg. Close bdeadmin.
 
-Expost default settings to text file using the following command:
+Export default settings to text file using the following command:
 
 		bdecli -e idapi32.cfg default.txt
 
