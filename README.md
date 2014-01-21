@@ -40,16 +40,16 @@ bdecli is a bugfixed and renamed version of idapi32cfg 1.0.0 project. It was
 moved from CodePlex to GitHub. Functionally they are identical, but idapi32cfg
 executable has one serious bug:
 <https://github.com/oboroc/bdecli/commit/75cb74338b90cc907a9d7b81a87f8b5bc95c55c6>.
-If you used idapi32cfg program, it is best if you update to the latest 1.0.x
+If you use idapi32cfg program, it is best to update to the latest 1.0.x
 version of bdecli.
 
 bdecli is compiled with Visual C++ 6.0 SP6. The advantage of using such an old
-compiler is that any Windows version starting with 2000 and up includes full
-shared run-time for Microsoft Visual C++ 6.0. This means that executable could
-stay small, no need to link run-time statically. Also it means that shared
-runtime is automatically updated with security fixes as part of Windows Update
-or WSUS patching. Historically, idapi32cfg executable was compiled with
-Visual C++ 2010 with staticly linked run-time and compressed with UPX.
+compiler is that Windows 2000 and up includes full shared run-time. This means
+that executable could stay small, no need to link run-time statically. Also it
+means that shared runtime is automatically updated with security fixes as part
+of Windows Update or WSUS patching. idapi32cfg executable from April 2010 was
+compiled using Visual C++ 2010 with staticly linked run-time and compressed
+with UPX.
 
 
 Using bdecli
