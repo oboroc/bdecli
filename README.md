@@ -12,7 +12,7 @@ The ASF licenses this file to You under the Apache License, Version 2.0
 (the "License"); you may not use this file except in compliance with
 the License.  You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+ <http://www.apache.org/licenses/LICENSE-2.0>
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,9 +24,9 @@ limitations under the License.
 About bdecli
 ------------
 
-bdecli is a Borland Database command-line interface configuration tool. It is a
-tool that can be included in deployment scripts or MSI custom actions to add or
-overwrite idapi32.cfg configuration settings in unattended mode.
+bdecli is a Borland Database command-line interface configuration tool. It can
+be included in deployment scripts or MSI custom actions to add or overwrite
+idapi32.cfg configuration settings in unattended mode.
 
 One way to handle idapi32.cfg file updates is to keep a master copy,
 modify it in bdeadmin tool from Borland when necessary and then push updated
