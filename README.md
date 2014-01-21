@@ -25,12 +25,11 @@ About bdecli
 ------------
 
 bdecli is a Borland Database command-line interface configuration tool. It is a
-command-line tool that can be included in deployment scripts or MSI custom
-actions to add or overwrite idapi32.cfg configuration settings in unattended
-mode.
+tool that can be included in deployment scripts or MSI custom actions to add or
+overwrite idapi32.cfg configuration settings in unattended mode.
 
 One way to handle idapi32.cfg file updates is to keep a master copy,
-modify it in bdeadmin tool from Borland when necessary and then pushed updated
+modify it in bdeadmin tool from Borland when necessary and then push updated
 file to all workstation. If this is how you handle it, you dont need bdecli.
 
 If, however, you want to have multiple configurations in the field and you
@@ -59,8 +58,8 @@ Using bdecli
 ------------
 
 Start with a generic blank idapi32.cfg file. You can create one by deleting
-your current idapi32.cfg file, opening bdeadmin tool and save default
-settings in new idapi32.cfg. Close bdeadmin program.
+your current idapi32.cfg file, opening bdeadmin tool and saving default
+settings in new idapi32.cfg. Close bdeadmin.
 
 Expost default settings to text file using the following command:
 
