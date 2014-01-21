@@ -57,22 +57,22 @@ Using bdecli
 
 Start with a generic blank idapi32.cfg file. You can create one by deleting
 your current idapi32.cfg file, opening bdeadmin tool and saving default
-settings in new idapi32.cfg. Close bdeadmin.
+settings in new idapi32.cfg.
 
-Export default settings to text file using the following command:
+Export default settings to a text file using the following command:
 
 		bdecli -e idapi32.cfg default.txt
 
 Now open bdeadmin program again and make necessary configuration changes for
-your application. Save to idapi32.cfg and close bdeadmin.
+your application. Save to idapi32.cfg.
 
-Export newly updated idapi32.cfg file to another text file:
+Export updated idapi32.cfg file to another text file:
 
 		bdecli -e idapi32.cfg updated.txt
 
-Use your favorite text file comparison tool (windiff, winmerge, fc) to find all
-lines in updated.txt that are not part of default.txt and put the difference in
-new text file, lets call it cfgdiff.txt.
+Use your favorite text file comparison tool (fc, windiff, winmerge etc.) to
+find all lines in updated.txt that are not part of default.txt and put the
+difference in a new text file. Lets call it cfgdiff.txt.
 
 Add this new text file and bdecli executable to your MSI project or deployment
 script. Use the following command to import application specific configuration
