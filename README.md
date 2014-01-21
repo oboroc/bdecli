@@ -1,10 +1,9 @@
-# bdecli #
+bdecli 1.0.3
+============
 
 bdecli - Borland Database Engine command-line interface.
 
-Copyright (C) 2010, 2014 Adrian Oboroc
- 
-This file is part of bdecli project <https://github.com/oboroc/bdecli/>.
+Copyright (C) 2010, 2014 Adrian Oboroc <https://github.com/oboroc/bdecli/>
 
 Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with
@@ -22,7 +21,8 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 
-## About bdecli ##
+About bdecli
+------------
 
 bdecli is Borland Database command-line interface. It is a command-line tool
 that can be included in deployment scripts or MSI custom actions to add or
@@ -46,7 +46,8 @@ If you used idapi32cfg program, it is best if you update to the latest 1.0.x
 version of bdecli.
 
 
-## using bdecli ##
+Using bdecli
+------------
 
 Start with a generic blank idapi32.cfg file. You can create one by deleting
 your current idapi32.cfg file, opening bdeadmin tool and save default
@@ -74,7 +75,8 @@ settings:
 		bdecli -i idapi32.cfg cfgdiff.txt
 
 
-## Future development plans ##
+Future development plans
+------------------------
 
 It is quite clear that applications that use BDE are on their last legs.
 Nevertheless, I like working on this tool and plan to do major changes in future.
