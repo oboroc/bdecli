@@ -46,6 +46,14 @@ but idapi32cfg executable has one serious bug:
 If you used idapi32cfg program, it is best if you update to the latest 1.0.x
 version of bdecli.
 
+bdecli is now compiled with Visual C++ 6.0 SP6. The advantage of using such an
+old compiler is that any Windows version starting with 2000 and up includes
+full shared run-time for Microsoft Visual C++ 6.0. This means that executable
+could stay small, no need to link run-time statically. Also it means that
+shared runtime is automatically updated with security fixes as part of Windows
+Update or WSUS patching. Historically, idapi32cfg executable was compiled with
+Visual C++ 2010 with staticly linked run-time and compressed with UPX.
+
 
 Using bdecli
 ------------
