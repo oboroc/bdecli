@@ -1,5 +1,7 @@
-bdecli - Borland Database Engine command-line interface
-=======================================================
+bdecli
+======
+
+bdecli is a Borland Database Engine command-line interface configuration tool.
 
 Copyright (C) 2010, 2014 Adrian Oboroc <https://github.com/oboroc/bdecli/>
 
