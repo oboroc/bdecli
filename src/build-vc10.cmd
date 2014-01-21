@@ -10,4 +10,4 @@ set PATH=%VCDIR%\Common7\IDE;%VCDIR%\VC\BIN;%PATH%
 cl.exe /nologo /TC /W4 /O2 bdecli.c > bdecli.vc10.err
 rem /W1 to /W4 for warnings, /WX to treat warning as errors, /O2 for moderate optimization
 
-if exist *.obj del *.obj *.i
+if exist *.obj del *.obj
