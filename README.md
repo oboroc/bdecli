@@ -1,7 +1,5 @@
-bdecli 1.0.3
-============
-
-bdecli - Borland Database Engine command-line interface.
+bdecli - Borland Database Engine command-line interface
+=======================================================
 
 Copyright (C) 2010, 2014 Adrian Oboroc <https://github.com/oboroc/bdecli/>
 
