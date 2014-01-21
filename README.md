@@ -85,16 +85,17 @@ Future development plans
 ------------------------
 
 It is quite clear that applications that use BDE are on their last legs.
-Nevertheless, I like working on this tool and plan to do major changes in future.
-I want to add more command line settings and make bdecli work a lot like Windows
-built-in reg.exe tool. This includes both batch and command-line querying,
-adding, updating, removing and so on.
+Nevertheless, I like working on this tool and plan to do major changes in
+future. I want to add more command line settings and make bdecli work a lot
+like built-in Windows reg.exe tool. This includes both batch and command-line
+querying, adding, updating, removing and so on.
 
-I will probably also add some test units for manual validation or CI integration.
+I will probably also add some test units for manual validation or CI
+integration.
 
-I consider moving from built-in data structure handling code to uthash, but it is
-a bit tough to learn how to use properly and currently not mainained for Windows
+I consider moving from built-in data structure handling to uthash, but it is a
+bit tough to learn how to use properly and currently not mainained for Windows
 and Visual C++.
 
-Finally, I will probably start providing a DLL version that could be called from
-MSI custom action.
+Finally, I will probably start providing a DLL version that could be called
+from MSI custom action.
