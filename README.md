@@ -48,7 +48,7 @@ compiler is that Windows 2000 and up includes full shared run-time. This means
 that executable could stay small, no need to link run-time statically. Also it
 means that shared runtime is automatically updated with security fixes as part
 of Windows Update or WSUS patching. idapi32cfg executable from April 2010 was
-compiled using Visual C++ 2010 with staticly linked run-time and compressed
+compiled using Visual C++ 2010 with statically linked run-time and compressed
 with UPX.
 
 
