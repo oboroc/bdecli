@@ -357,12 +357,14 @@ void bde_cfg_export(bde_entry_t *list, char *szFileName)
 
 void bde_cfg_free(bde_entry_t *list)	/* free all memory allocated for linked list */
 {
-	bde_entry_t *item, *tmp;
+	bde_entry_t *item;
 
 	item = list;
 
 	while (item)
 	{
+		bde_entry_t *tmp;
+
 		tmp = item;
 		item = item->next;
 
