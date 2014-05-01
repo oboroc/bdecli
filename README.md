@@ -80,6 +80,15 @@ settings:
 
 		bdecli -i idapi32.cfg cfgdiff.txt
 
+You can also get and set specific settings for individual keys. This makes it
+easy to programmatically update configuration settings:
+
+		bdecli -g idapi32.cfg "SYSTEM\INIT\SHAREDMEMSIZE"
+		# SYSTEM\INIT\SHAREDMEMSIZE = "2048"
+
+		bdecli -s idapi32.cfg "SYSTEM\INIT\SHAREDMEMSIZE" "8192"
+		# SYSTEM\INIT\SHAREDMEMSIZE = "8192"
+
 
 Future development plans
 ------------------------
