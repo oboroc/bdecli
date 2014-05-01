@@ -943,6 +943,10 @@ int main(int argc, char *argv[])
 		szFileName=argv[2];
 		szFQNPath=argv[3];
 		szValue=argv[4];
+		if (szValue == NULL) {
+			szValue="";
+		}
+
 
 		
 		// Load our BDE file
