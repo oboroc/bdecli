@@ -2,7 +2,7 @@
 echo Compile asmsx with Digital Mars Compiler
 
 SET PATH=C:\dm\bin;%PATH%
-SET INCLUDE=C:\dm\include;..\..\compat_s\src
+SET INCLUDE=C:\dm\include
 set LIB=C:\dm\lib
 
 dmc.exe -A -r -w- -o+space -6 bdecli.c

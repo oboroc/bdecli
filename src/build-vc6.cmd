@@ -2,7 +2,7 @@
 echo Compile asmsx with Visual C++ 98 (6.0)
 
 set VCDIR=C:\Program Files\Microsoft Visual Studio
-set INCLUDE=%VCDIR%\VC98\INCLUDE;..\..\compat_s\src
+set INCLUDE=%VCDIR%\VC98\INCLUDE
 set LIB=%VCDIR%\VC98\LIB
 set PATH=%VCDIR%\Common\msdev98\bin;%VCDIR%\VC98\bin;%PATH%
 
