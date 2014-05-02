@@ -2,6 +2,8 @@
  * 
  * Copyright (C) 2010, 2014 Adrian Oboroc
  *  
+ * Code changes made by Liam Nattrass to allow update and retrieval of specific settings.
+ *
  * This file is part of bdecli project <https://github.com/oboroc/bdecli/>.
  * 
  * Licensed to the Apache Software Foundation (ASF) under one or more
@@ -32,7 +34,7 @@
 
 #include "compat_s.h"
 
-#define BDECLI_VER "1.0.3"
+#define BDECLI_VER "1.0.4"
 #define MAX_BUFFER 10000
 #define BDE_NUL 0
 #define BDE_VAR 1
@@ -178,7 +180,7 @@ bde_entry_t* bde_cfg_parse(char *szFileName)
 		switch(ch)
 		{
 
-		case BDE_NUL:	/* 0x0000 - contrainer */
+		case BDE_NUL:	/* 0x0000 - container */
 
 			str = bde_fgets(f);
 
@@ -316,6 +318,29 @@ int bde_containers(bde_entry_t *entry)
 	return count;
 }
 
+bde_entry_t* bde_find_fqn(bde_entry_t *list, char *szFQNPath) {
+	char *str;
+	bde_entry_t *current;
+
+	current = list;
+
+	while (current) {
+		if (BDE_VARIABLE == current->entry_type) {
+			str = bde_fqn(current);
+			
+			if (strcmp(str,szFQNPath) == 0) {
+				free(str);
+				return current;
+			}
+			
+			free(str);
+		}
+
+		current = current->next;
+	}
+
+	return NULL;
+}
 
 void bde_cfg_export(bde_entry_t *list, char *szFileName)
 {
@@ -337,15 +362,20 @@ void bde_cfg_export(bde_entry_t *list, char *szFileName)
 
 	while (current)
 	{
+		/* If the entry type is a variable */
 		if (BDE_VARIABLE == current->entry_type)
 		{
+			/* convert to a fully qualified name */
 			str = bde_fqn(current);
 
+			/* write to output file */
 			fprintf_s(f, "%s = %s\n", str, current->value);
 
+			/* Free the allocated str */
 			free(str);
 		}
 
+		/* Set next item */
 		current = current->next;
 	}
 
@@ -562,6 +592,7 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 	/* iterate through containers in szFQNPath */
 	while (0 != tmp[i])
 	{
+		/* If we have a backslash or next character is null */
 		if (('\\' == tmp[i]) || (0 == tmp[i + 1]))
 		{
 			if (i > MAX_BUFFER)	/* sanitize possible buffer overflow */
@@ -820,6 +851,16 @@ int main(int argc, char *argv[])
 	bde_entry_t *cfg;
 	int change_no;
 	cfg = NULL;
+	int retnval=0;
+
+	bde_entry_t *target;
+	target=NULL;
+	
+	char *str;
+	char *szFQNPath, *szFileName, *szValue, *szName;
+	char szFQNContainer[MAX_BUFFER]="";
+	char *token;
+	int i;
 
 	if (1 == argc)
 	{
@@ -827,12 +868,14 @@ int main(int argc, char *argv[])
 		printf_s(
 			"Export settings from idapi32.cfg: bdecli -e idapi32.cfg output.txt\n"
 			"Edit the text file, leaving only settings relevant to deployed application.\n"
-			"Import settings from edited text file: bdecli -i idapi32.cfg input.txt\n"
+			"Import settings from edited text file: bdecli -i idapi32.cfg input.txt\n\n"
+			"Get a setting value: bdecli -g idapi32.cfg \"SYSTEM\\INIT\\LOCAL SHARE\"\n"
+			"Set a setting value: bdecli -s idapi32.cfg \"SYSTEM\\INIT\\LOCAL SHARE\" \"TRUE\"\n"
 			);
 		return 1;
 	}
 
-	if (4 != argc)
+	if (argc < 4)
 	{
 		printf_s("Error in main(): wrong number of parameters. Type bdecli for usage.\n");
 		return 2;
@@ -867,11 +910,83 @@ int main(int argc, char *argv[])
 		bde_cfg_export(cfg, argv[3]);
 		break;
 
+	case 'g':
+	case 'G':
+		szFileName = argv[2];
+		szFQNPath = argv[3];
+
+		// Import BDE config to a linked list
+		cfg = bde_cfg_parse(szFileName);
+
+		// Find FQN for our target
+		target = bde_find_fqn(cfg, szFQNPath);
+
+		if (target != NULL) {
+			if (target->entry_type == BDE_VARIABLE) {
+				str = bde_fqn(target);
+				printf_s("%s = %s\n", str, target->value);
+				free(str);
+			} else {
+				retnval=1;
+				printf_s("%s is not a variable, it is probably a container.\n", szFQNPath);
+			}
+		} else {
+			retnval=1;
+			printf_s("Unable to find value for %s\n", szFQNPath);
+		}
+
+		break;
+
+	case 's':
+	case 'S':
+		// Arguments are as so:
+		szFileName=argv[2];
+		szFQNPath=argv[3];
+		szValue=argv[4];
+		if (szValue == NULL) {
+			szValue="";
+		}
+
+
+		
+		// Load our BDE file
+		cfg = bde_cfg_parse(szFileName);
+
+		// Separate the FQN to it's components
+		token = strtok(szFQNPath, "\\");
+		while (token != NULL) {
+			szName = token;
+			token = strtok(NULL, "\\");
+
+			if (token!=NULL) {
+				if (i>0)
+					strcat_s(szFQNContainer, MAX_BUFFER, "\\");
+				
+				strcat_s(szFQNContainer, MAX_BUFFER, szName);
+			}
+			i++;
+		}
+
+		printf_s("Adding / updating entry. (%s:%s = %s)\n", szFQNContainer, szName, szValue);
+
+		// Update the changes that were made
+		change_no = bde_cfg_add_entry(cfg, szFQNContainer, szName, szValue);
+		if (change_no > 0 ) {
+			printf_s("%d changes made, writing config.\n", change_no);
+		} else {
+			printf_s("No changes made, skipping file write.\n");
+		}
+		
+		// Write the config back to our target
+		bde_cfg_write(cfg, szFileName);
+		break;
+
 	default:
 		printf_s("Error in main(): invalid switch. Type bdecli for usage.\n");
 		return 2;
 	}
 
 	bde_cfg_free(cfg);
-	return 0;
+	return retnval;
 }
+
