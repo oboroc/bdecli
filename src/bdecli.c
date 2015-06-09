@@ -2,7 +2,9 @@
  * 
  * Copyright (C) 2010, 2014 Adrian Oboroc
  *  
- * This file is part of bdecli project <https://github.com/oboroc/bdecli/>.
+ * This file is part of bdecli project
+ *
+ *     https://github.com/oboroc/bdecli/
  * 
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
