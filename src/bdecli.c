@@ -572,7 +572,8 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 				return 0;
 			}
 
-			if ('\\' == tmp[i]) {
+			if ('\\' == tmp[i])
+			{
 				strncpy_s(buf, MAX_BUFFER, tmp, i);
 				buf[i] = 0;
 			}
