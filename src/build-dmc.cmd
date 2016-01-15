@@ -1,5 +1,5 @@
 @echo off
-echo Compile asmsx with Digital Mars Compiler
+echo Compile with Digital Mars Compiler
 
 SET PATH=C:\dm\bin;%PATH%
 SET INCLUDE=C:\dm\include

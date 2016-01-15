@@ -1,5 +1,5 @@
 @echo off
-echo Compile asmsx with Open Watcom C32 1.9
+echo Compile with Open Watcom C32 1.9
 
 SET PATH=C:\WATCOM\BINW;C:\WATCOM\BINNT;%PATH%
 SET INCLUDE=C:\WATCOM\H;C:\WATCOM\H\NT
