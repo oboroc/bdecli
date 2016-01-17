@@ -108,6 +108,6 @@ for this at build time.
 * Add build script for Visual Studio 2015.
 
 * Add new release link to all my old forums posts about previous CodePlex release:
-    <http://www.dbforums.com/corel-paradox/1199036-modifying-idapi32-cfg.html>
-    <http://www.xtremevbtalk.com/showthread.php?t=209454>
-    <http://www.itninja.com/question/idapi32-cfg-file-for-bde-help>
+- <http://www.dbforums.com/corel-paradox/1199036-modifying-idapi32-cfg.html>
+- <http://www.xtremevbtalk.com/showthread.php?t=209454>
+- <http://www.itninja.com/question/idapi32-cfg-file-for-bde-help>
