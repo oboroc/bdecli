@@ -86,16 +86,28 @@ Future development plans
 
 It is quite clear that applications that use BDE are on their last legs.
 Nevertheless, I like working on this tool and plan to do major changes in
-future. I want to add more command line settings and make bdecli work a lot
-like built-in Windows reg.exe tool. This includes both batch and command-line
-querying, adding, updating, removing and so on.
+future. I'd like to:
 
-I will probably also add some test units for manual validation or CI
-integration.
+* Add more command line settings and make bdecli work a lot like built-in
+Windows reg.exe tool. This includes both batch and command-line querying,
+adding, updating, removing and so on.
 
-I consider moving from built-in data structure handling to uthash, but it is a
-bit tough to learn how to use properly and currently not mainained for Windows
-and Visual C++.
+* Add some test units for manual validation or CI integration.
 
-Finally, I will probably start providing a DLL version that could be called
-from MSI custom action.
+* Move from built-in data structure handling to uthash. It is a bit tough to
+learn how to use it properly and it is currently not passing its own test
+suite on Windows and Visual C++.
+
+* Start providing a DLL version that could be called from MSI custom action.
+
+* Add icon to bdecli executable. Use rc.exe or <http://code.google.com/p/rescle/>
+for this at build time.
+
+* Create better documentation.
+
+* Add build script for Visual Studio 2015.
+
+* Add new release link to all my old forums posts about previous CodePlex release:
+    1. <http://www.dbforums.com/corel-paradox/1199036-modifying-idapi32-cfg.html>
+    2. <http://www.xtremevbtalk.com/showthread.php?t=209454>
+    3. <http://www.itninja.com/question/idapi32-cfg-file-for-bde-help>
