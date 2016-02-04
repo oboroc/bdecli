@@ -1,6 +1,6 @@
 /* bdecli - Borland Database Engine command-line interface.
  * 
- * Copyright (C) 2010, 2015 Adrian Oboroc
+ * Copyright (C) 2010, 2016 Adrian Oboroc
  *  
  * This file is part of bdecli project
  *
@@ -828,7 +828,7 @@ int main(int argc, char *argv[])
 
 	if (1 == argc)
 	{
-		printf_s("bdecli %s (c) 2010, 2015 Adrian Oboroc https://github.com/oboroc/bdecli/ (%s)\n\n", BDECLI_VER, __DATE__);
+		printf_s("bdecli %s (c) 2010, 2016 Adrian Oboroc https://github.com/oboroc/bdecli/ (%s)\n\n", BDECLI_VER, __DATE__);
 		printf_s(
 			"Export settings from idapi32.cfg: bdecli -e idapi32.cfg output.txt\n"
 			"Edit the text file, leaving only settings relevant to deployed application.\n"
