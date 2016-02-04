@@ -1,7 +1,7 @@
 bdecli
 ======
 
-Copyright (C) 2010, 2014 Adrian Oboroc <https://github.com/oboroc/bdecli/>
+Copyright (C) 2010, 2016 Adrian Oboroc <https://github.com/oboroc/bdecli/>
 
 Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with
@@ -107,8 +107,6 @@ suite on Windows and Visual C++.
 for this at build time.
 
 * Create better documentation.
-
-* Add build script for Visual Studio 2015.
 
 * Add new release link to all my old forums posts about previous CodePlex release:
     - <http://www.dbforums.com/corel-paradox/1199036-modifying-idapi32-cfg.html>
