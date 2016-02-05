@@ -22,7 +22,7 @@ limitations under the License.
 About bdecli
 ------------
 
-bdecli is a Borland Database command-line interface configuration tool. It can
+bdecli is a Borland Database Engine command-line configuration tool. It can
 be included in deployment scripts or MSI custom actions to add or overwrite
 idapi32.cfg configuration settings in unattended mode.
 
