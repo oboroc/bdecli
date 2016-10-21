@@ -123,7 +123,7 @@ bde_entry_t* bde_new_entry(bde_entry_t *prev, bde_entry_t *cont)
 
 	if (!entry)
 	{
-		printf_s("Error in bde_new_entry(): failed to allocate %u bytes of memory for linked list entry\n", sizeof(bde_entry_t));
+		printf_s("Error in bde_new_entry(): failed to allocate %zu bytes of memory for linked list entry\n", sizeof(bde_entry_t));
 		return NULL;
 	}
 
