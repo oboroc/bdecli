@@ -151,7 +151,7 @@ bde_entry_t* bde_cfg_parse(char *szFileName)
 	
 	err = fopen_s(&f, szFileName, "r");	/* open for read (will fail if file does not exist) */
 
-	if (0 != err)
+	if ((0 != err) || (0 == f))
 	{
 		fprintf_s(stderr, "Error in bde_cfg_parse(): file \"%s\" was not opened\n", szFileName);
 		exit(1);//return NULL;
