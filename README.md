@@ -39,9 +39,8 @@ intact.
 bdecli is a bugfixed and renamed version of idapi32cfg 1.0.0 project. It was
 moved from CodePlex to GitHub. Functionally they are identical, but idapi32cfg
 executable has two serious bugs:
-
-- <https://github.com/oboroc/bdecli/commit/75cb74338b90cc907a9d7b81a87f8b5bc95c55c6>
-- <https://github.com/oboroc/bdecli/commit/4a489819aa564671dc71b9f5bbd3225f62852ecb>
+[75cb743](https://github.com/oboroc/bdecli/commit/75cb743) and
+[4a48981](https://github.com/oboroc/bdecli/commit/4a48981)
 
 If you use idapi32cfg program, it is best to update to the latest 1.0.x
 version of bdecli.
