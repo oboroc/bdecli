@@ -146,10 +146,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\bdecli.c" />
+    <ClCompile Include="..\..\src\bdecli.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\src\compat_s.h" />
+    <ClInclude Include="..\..\src\compat_s.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
