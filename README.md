@@ -111,3 +111,5 @@ for this at build time.
     - <http://www.dbforums.com/corel-paradox/1199036-modifying-idapi32-cfg.html>
     - <http://www.xtremevbtalk.com/showthread.php?t=209454>
     - <http://www.itninja.com/question/idapi32-cfg-file-for-bde-help>
+
+* Consider using established command-line parameter parsing library like [argtable](http://argtable.sourceforge.net/).
