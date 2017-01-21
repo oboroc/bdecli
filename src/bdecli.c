@@ -279,6 +279,7 @@ char* bde_fqn(bde_entry_t *entry)
 	bde_entry_t *current;
 	char tmp[MAX_BUFFER], *str;
 	char buf[MAX_BUFFER] = "";	/* initialize buffer with empty string */
+	size_t str_len;
 
 	current = entry;
 	while (current)
@@ -295,7 +296,14 @@ char* bde_fqn(bde_entry_t *entry)
 		current = current->container;
 	}
 
-	str = (char *)malloc(strlen(buf) + 1);
+	str_len = strlen(buf) + 1;
+	str = (char *)malloc(str_len);
+
+	if (NULL == str)
+	{
+		fprintf_s(stderr, "Error in bde_fqn(): failed to allocate %lu bytes for return string\n", (unsigned long)str_len);
+		exit(1);
+	}
 
 	strcpy_s(str, strlen(buf) + 1, buf);
 
