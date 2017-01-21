@@ -339,7 +339,7 @@ void bde_cfg_export(bde_entry_t *list, char *szFileName)
 	
 	err = fopen_s(&f, szFileName, "w");	/* open for writing (will overwrite if file exists) */
 
-	if (0 != err)
+	if ((0 != err) || (NULL == f))
 	{
 		fprintf_s(stderr, "Error in bde_cfg_export(): file \"%s\" was not opened\n", szFileName);
 		exit(1);
