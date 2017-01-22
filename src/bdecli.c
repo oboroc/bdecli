@@ -561,7 +561,7 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 	if (BDE_CONTAINER != list->entry_type)	/* sanitize list */
 	{
 		fprintf_s(stderr, "Error in bde_cfg_add_entry(): first entry in linked list is not a container\n");
-		return 0;
+		exit(1);
 	}
 
 	tmp = szFQNPath;
@@ -577,7 +577,7 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 			if (i > MAX_BUFFER)	/* sanitize possible buffer overflow */
 			{
 				fprintf_s(stderr, "Error in bde_cfg_add_entry(): string buffer is too small");
-				return 0;
+				exit(1);
 			}
 
 			if ('\\' == tmp[i])
@@ -618,7 +618,7 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 				if (!co)
 				{
 					fprintf_s(stderr, "Error in bde_cfg_add_entry(): malloc() failed while creating new container\n");
-					return 0;
+					exit(1);
 				}
 
 				co->entry_type = BDE_CONTAINER;
@@ -627,7 +627,7 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 				if (!co->name)
 				{
 					fprintf_s(stderr, "Error in bde_cfg_add_entry(): malloc() failed while creating new container name\n");
-					return 0;
+					exit(1);
 				}
 				strcpy_s(co->name, strlen(buf) + 1, buf);
 
@@ -666,7 +666,7 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 					if (!current->value)	/* sanitize for realloc failure */
 					{
 						fprintf_s(stderr, "Error in bde_cfg_add_entry(): realloc() failed\n");
-						return 0;
+						exit(1);
 					}
 				}
 				strcpy_s(current->value, buflen, szValue);
@@ -688,7 +688,7 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 	if (!current)
 	{
 		fprintf_s(stderr, "Error in bde_cfg_add_entry(): malloc() failed while creating new variable\n");
-		return 0;
+		exit(1);
 	}
 
 	current->entry_type = BDE_VARIABLE;
@@ -697,7 +697,7 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 	if (!current->name)
 	{
 		fprintf_s(stderr, "Error in bde_cfg_add_entry(): malloc() failed while creating new variable name\n");
-		return 0;
+		exit(1);
 	}
 	strcpy_s(current->name, strlen(szName) + 1, szName);
 
@@ -705,7 +705,7 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 	if (!current->value)
 	{
 		fprintf_s(stderr, "Error in bde_cfg_add_entry(): malloc() failed while creating new variable value\n");
-		return 0;
+		exit(1);
 	}
 	strcpy_s(current->value, strlen(szValue) + 1, szValue);
 
