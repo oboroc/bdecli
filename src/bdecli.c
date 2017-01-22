@@ -645,6 +645,13 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 		i++;
 	}
 
+	/* validate that container is not NULL */
+	if (NULL == co)
+	{
+		fprintf_s(stderr, "Error in bde_cfg_add_entry(): container is NULL\n");
+		exit(1);
+	}
+
 	/* we have proper container, now we should modify or add variable */
 	current = co->next;
 	while ((current) && (current->container == co))
