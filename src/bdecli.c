@@ -278,9 +278,10 @@ char* bde_fqn(bde_entry_t *entry)
 {
 	bde_entry_t *current;
 	char tmp[MAX_BUFFER], *str;
-	char buf[MAX_BUFFER] = "";	/* initialize buffer with empty string */
+	char buf[MAX_BUFFER];
 	size_t str_len;
 
+	buf[0] = 0;
 	current = entry;
 	while (current)
 	{
