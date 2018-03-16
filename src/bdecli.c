@@ -611,6 +611,11 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 			if (!co)	/* container not found, we should create a new one */
 			{
 				current = parcon ? parcon : list;
+				if (!current)
+				{
+					fprintf_s(stderr, "Error in bde_cfg_add_entry(): parent container is NULL\n");
+					exit(1);
+				}
 				while ((current->next) && (bde_contains(parcon, current->next)))
 					current = current->next;
 				tmp_e = current->next;
