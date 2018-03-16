@@ -35,7 +35,7 @@
 #include "compat_s.h"
 
 #define BDECLI_VER "1.0.4"
-#define MAX_BUFFER 10000
+#define MAX_BUFFER 1000		// at 10000 generates stack overflow warning that still needs to be addressed
 #define BDE_NUL 0
 #define BDE_VAR 1
 #define BDE_EOB 2
