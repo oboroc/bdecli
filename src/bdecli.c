@@ -277,28 +277,22 @@ bde_entry_t* bde_cfg_parse(char *szFileName)
 char* bde_fqn(bde_entry_t *entry)
 {
 	bde_entry_t *current;
-	char tmp[MAX_BUFFER], *str;
-	char buf[MAX_BUFFER];
-	size_t str_len;
+	char *str;
+	size_t str_len, str_pos, el_pos;
 
-	buf[0] = 0;
 	current = entry;
+	str_len = 0;
 	while (current)
 	{
-		strcpy_s(tmp, MAX_BUFFER, buf);	/* save work in progress name in temporary buffer */
-
-		strcpy_s(buf, MAX_BUFFER, current->name);	/* start building new name prefixed with container name */
+		str_len += strnlen_s(current->name, sizeof current->name);
 
 		if (current != entry)
-			strcat_s(buf, MAX_BUFFER, "\\");	/* and registry or folder style delimiter */
-		
-		strcat_s(buf, MAX_BUFFER, tmp);	/* append previous name */
+			str_len++;	/* add '\\' length */
 
 		current = current->container;
 	}
 
-	str_len = strlen(buf) + 1;
-	str = (char *)malloc(str_len);
+	str = (char *)malloc(str_len + 1);
 
 	if (NULL == str)
 	{
@@ -306,11 +300,33 @@ char* bde_fqn(bde_entry_t *entry)
 		exit(1);
 	}
 
-	strcpy_s(str, strlen(buf) + 1, buf);
+	str[str_len + 1] = 0;	// start with \0 at the end of string;
+
+	/* build fully qualified path string for entry */
+	current = entry;
+	str_pos = str_len;
+	while (current)
+	{
+		el_pos = strlen(current->name);
+
+		while (0 < el_pos)
+		{
+			str[str_pos] = current->name[el_pos];
+			str_pos--;
+			el_pos--;
+		}
+		
+		if (current != entry)
+		{
+			str[str_pos] = '\\';	/* add delimiter */
+			str_pos--;
+		}
+
+		current = current->container;
+	}
 
 	return str;
 }
-
 
 int bde_containers(bde_entry_t *entry)
 {
