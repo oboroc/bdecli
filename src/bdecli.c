@@ -278,7 +278,8 @@ char* bde_fqn(bde_entry_t *entry)
 {
 	bde_entry_t *current;
 	char *str;
-	size_t str_len, str_pos, el_pos;
+	size_t str_len;
+	int str_pos, cur_pos;
 
 	current = entry;
 	str_len = 0;
@@ -300,28 +301,31 @@ char* bde_fqn(bde_entry_t *entry)
 		exit(1);
 	}
 
-	str[str_len + 1] = 0;	// start with \0 at the end of string;
+	memset(str, '?', str_len); // debug
+	str[str_len] = 0;	/* terminate string with \0 */
+	printf("str = '%s'\n", str); // debug
 
 	/* build fully qualified path string for entry */
 	current = entry;
-	str_pos = str_len;
+	str_pos = (int)(str_len - 1);
 	while (current)
 	{
-		el_pos = strlen(current->name);
-
-		while (0 < el_pos)
-		{
-			str[str_pos] = current->name[el_pos];
-			str_pos--;
-			el_pos--;
-		}
-		
 		if (current != entry)
 		{
 			str[str_pos] = '\\';	/* add delimiter */
 			str_pos--;
 		}
 
+		cur_pos = (int)(strlen(current->name) - 1);
+
+		while (0 <= cur_pos)
+		{
+			str[str_pos] = current->name[cur_pos];
+			str_pos--;
+			cur_pos--;
+			printf("str = '%s'\n", str); // debug
+		}
+		
 		current = current->container;
 	}
 
