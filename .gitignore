@@ -309,3 +309,7 @@ $RECYCLE.BIN/
 *.exe
 *.output
 *.map
+
+# BDE config files
+*.cfg
+*.txt
