@@ -573,8 +573,7 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 {
 	bde_entry_t *current, *parcon, *co, *tmp_e;
 	char buf[MAX_BUFFER], *tmp;
-	int i;
-	size_t buflen;
+	size_t i, buflen;
 
 	if (BDE_CONTAINER != list->entry_type)	/* sanitize list */
 	{
