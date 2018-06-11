@@ -35,7 +35,7 @@
 #include "compat_s.h"
 
 #define BDECLI_VER "1.0.4"
-#define MAX_BUFFER 20000
+#define MAX_BUFFER 1000
 #define BDE_NUL 0
 #define BDE_VAR 1
 #define BDE_EOB 2
@@ -52,8 +52,8 @@ typedef enum bde_entry_type
 
 typedef struct bde_entry_t
 {
-	bde_entry_type entry_type;				/* entry type */
-	char *name, *value;					/* entry name and value */
+	bde_entry_type entry_type;							/* entry type */
+	char *name, *value;									/* entry name and value */
 	struct bde_entry_t *next, *previous, *container;	/* linked list and container pointers */
 } bde_entry_t;
 
