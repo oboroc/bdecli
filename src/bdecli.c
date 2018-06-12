@@ -34,7 +34,7 @@
 
 #include "compat_s.h"
 
-#define BDECLI_VER "1.0.4"
+#define BDECLI_VER "1.0.5"
 #define MAX_BUFFER 1000
 #define BDE_NUL 0
 #define BDE_VAR 1
