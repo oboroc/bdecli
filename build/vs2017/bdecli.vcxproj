@@ -150,6 +150,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\compat_s.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="bdecli.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
