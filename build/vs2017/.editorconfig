@@ -1,0 +1,17 @@
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# first attept as per https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties
+[*.{c,cc,cpp,h,hh,hpp}]
+indent_style = space
+indent_size = 2
+curly_bracket_next_line = false
+spaces_around_operators = true
+spaces_around_brackets = outside
+indent_brace_style = K&R
