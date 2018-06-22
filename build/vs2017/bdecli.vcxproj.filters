@@ -37,4 +37,9 @@
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\src\.editorconfig">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
 </Project>
