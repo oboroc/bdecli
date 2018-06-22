@@ -50,8 +50,8 @@ typedef enum bde_entry_type {
 } bde_entry_type;
 
 typedef struct bde_entry_t {
-  bde_entry_type entry_type;              /* entry type */
-  char *name, *value;                  /* entry name and value */
+  bde_entry_type entry_type;  /* entry type */
+  char *name, *value;         /* entry name and value */
   struct bde_entry_t *next, *previous, *container;  /* linked list and container pointers */
 } bde_entry_t;
 
@@ -123,7 +123,7 @@ bde_entry_t* bde_new_entry(bde_entry_t *prev, bde_entry_t *cont) {
   entry->container = cont;  /* by default, use container from previous linked list entry */
 
   if (prev)
-    prev->next = entry;  /* set previous entry's next field to new entry */
+    prev->next = entry; /* set previous entry's next field to new entry */
 
   return entry;
 }
@@ -139,7 +139,7 @@ bde_entry_t* bde_cfg_parse(char *szFileName)
   start = bde_new_entry(NULL, NULL);
   current = start;
   
-  err = fopen_s(&f, szFileName, "r");  /* open for read (will fail if file does not exist) */
+  err = fopen_s(&f, szFileName, "r"); /* open for read (will fail if file does not exist) */
 
   if ((0 != err) || (0 == f)) {
     fprintf_s(stderr, "Error in bde_cfg_parse(): file \"%s\" was not opened\n", szFileName);
@@ -165,7 +165,7 @@ bde_entry_t* bde_cfg_parse(char *szFileName)
 
     switch(ch) {
 
-    case BDE_NUL:  /* 0x0000 - contrainer */
+    case BDE_NUL: /* 0x0000 - contrainer */
 
       str = bde_fgets(f);
 
@@ -187,7 +187,7 @@ bde_entry_t* bde_cfg_parse(char *szFileName)
 
       break;
 
-    case BDE_VAR:  /* 0x0001 - value */
+    case BDE_VAR: /* 0x0001 - value */
 
       str = bde_fgets(f);
 
@@ -208,7 +208,7 @@ bde_entry_t* bde_cfg_parse(char *szFileName)
       current->name = str;
       current->value = value;
 
-      current = bde_new_entry(current, current->container);  /* spawn a new linked list entry */
+      current = bde_new_entry(current, current->container); /* spawn a new linked list entry */
 
       break;
 
@@ -241,7 +241,7 @@ bde_entry_t* bde_cfg_parse(char *szFileName)
 
   if (!current->name) {
     /* sanitize last preallocated linked list entry */
-    current->previous->next = NULL;  /* set the next field of previous linked list entry to null */
+    current->previous->next = NULL; /* set the next field of previous linked list entry to null */
     free(current);
   }
 
@@ -277,7 +277,7 @@ char* bde_fqn(bde_entry_t *entry) {
     exit(1);
   }
 
-  str[str_len] = 0;  /* terminate string with \0 */
+  str[str_len] = 0; /* terminate string with \0 */
 
   /* build fully qualified path string for entry */
   current = entry;
@@ -326,7 +326,7 @@ void bde_cfg_export(bde_entry_t *list, char *szFileName)
   /* Initialize current pointer */
   current = list;
   
-  err = fopen_s(&f, szFileName, "w");  /* open for writing (will overwrite if file exists) */
+  err = fopen_s(&f, szFileName, "w"); /* open for writing (will overwrite if file exists) */
 
   if ((0 != err) || (NULL == f)) {
     fprintf_s(stderr, "Error in bde_cfg_export(): file \"%s\" was not opened\n", szFileName);
@@ -382,7 +382,7 @@ void bde_fputs(char *str, FILE *f) {
   }
 
   fputc(BDE_NUL, f);  /* write lead zero */
-  fputs(str, f);    /* write the string */
+  fputs(str, f);      /* write the string */
   fputc(BDE_NUL, f);  /* write trail zero */
 }
 
@@ -396,7 +396,7 @@ void bde_cfg_write(bde_entry_t *list, char *szFileName) {
   /* Initialize current pointer */
   current = list;
   
-  err = fopen_s(&f, szFileName, "w");  /* open for writing (will overwrite if file exists) */
+  err = fopen_s(&f, szFileName, "w"); /* open for writing (will overwrite if file exists) */
 
   if (0 != err) {
     fprintf_s(stderr, "Error in bde_cfg_write(): file \"%s\" was not opened\n", szFileName);
@@ -444,16 +444,16 @@ void bde_cfg_write(bde_entry_t *list, char *szFileName) {
     }
 
     /* check if we should put the 'end of container' byte sequence */
-    if ((current->next) &&            /* there is a next entry */
-      (BDE_VARIABLE == current->entry_type) &&    /* current entry is a variable */
-      (current->container != current->next->container)) {  /* and it has a different container */
+    if ((current->next) &&                                /* there is a next entry */
+      (BDE_VARIABLE == current->entry_type) &&            /* current entry is a variable */
+      (current->container != current->next->container)) { /* and it has a different container */
 
       eob = 0;
 
       tmp_c = current->container;
       tmp_n = current->next->container;
 
-      ld = bde_containers(current) - bde_containers(current->next);  /* next entry belongs to fewer containers */
+      ld = bde_containers(current) - bde_containers(current->next); /* next entry belongs to fewer containers */
 
       if (0 < ld) {
         eob = ld;
@@ -590,7 +590,7 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 
         co->entry_type = BDE_CONTAINER;
 
-        co->name = (char *)malloc(strlen(buf) + 1);  /* allocate memory for name */
+        co->name = (char *)malloc(strlen(buf) + 1); /* allocate memory for name */
         if (!co->name) {
           fprintf_s(stderr, "Error in bde_cfg_add_entry(): malloc() failed while creating new container name\n");
           exit(1);
@@ -652,7 +652,7 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
     current = current->next;
   tmp_e = current->next;
 
-  current = bde_new_entry(current, co);  /* create new entry */
+  current = bde_new_entry(current, co); /* create new entry */
   if (!current) {
     fprintf_s(stderr, "Error in bde_cfg_add_entry(): malloc() failed while creating new variable\n");
     exit(1);
@@ -660,14 +660,14 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
 
   current->entry_type = BDE_VARIABLE;
 
-  current->name = (char *)malloc(strlen(szName) + 1);  /* allocate memory for name */
+  current->name = (char *)malloc(strlen(szName) + 1); /* allocate memory for name */
   if (!current->name) {
     fprintf_s(stderr, "Error in bde_cfg_add_entry(): malloc() failed while creating new variable name\n");
     exit(1);
   }
   strcpy_s(current->name, strlen(szName) + 1, szName);
 
-  current->value = (char *)malloc(strlen(szValue) + 1);  /* allocate memory for value */
+  current->value = (char *)malloc(strlen(szValue) + 1); /* allocate memory for value */
   if (!current->value) {
     fprintf_s(stderr, "Error in bde_cfg_add_entry(): malloc() failed while creating new variable value\n");
     exit(1);
@@ -694,7 +694,7 @@ int bde_cfg_update(bde_entry_t *list, char *szFileName)
   int err, i, change_no = 0;
   char buf[MAX_BUFFER], *szFQNPath, *szName, *szValue;
 
-  err = fopen_s(&f, szFileName, "r");  /* open for reading */
+  err = fopen_s(&f, szFileName, "r"); /* open for reading */
 
   if (0 != err) {
     fprintf_s(stderr, "Error in bde_cfg_export(): file \"%s\" was not opened\n", szFileName);
