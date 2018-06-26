@@ -1,7 +1,7 @@
 bdecli
 ======
 
-Copyright (C) 2010, 2016 Adrian Oboroc <https://github.com/oboroc/bdecli/>
+Copyright (C) 2010-2018 Adrian Oboroc <https://github.com/oboroc/bdecli/>
 
 Licensed to the Apache Software Foundation (ASF) under one or more
 contributor license agreements.  See the NOTICE file distributed with
