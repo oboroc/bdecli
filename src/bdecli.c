@@ -165,7 +165,7 @@ bde_entry_t* bde_cfg_parse(char *szFileName)
 
     switch(ch) {
 
-    case BDE_NUL: /* 0x0000 - contrainer */
+    case BDE_NUL: /* 0x0000 - container */
 
       str = bde_fgets(f);
 
