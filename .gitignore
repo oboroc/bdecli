@@ -313,3 +313,4 @@ $RECYCLE.BIN/
 # BDE config files
 *.cfg
 *.txt
+bdecli-cppcheck-build-dir/
