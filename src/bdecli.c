@@ -257,7 +257,7 @@ char* bde_fqn(bde_entry_t *entry) {
   bde_entry_t *current;
   char *str;
   size_t str_len;
-  int str_pos, cur_pos;
+  int str_pos;
 
   current = entry;
   str_len = 0;
@@ -283,6 +283,8 @@ char* bde_fqn(bde_entry_t *entry) {
   current = entry;
   str_pos = (int)(str_len - 1);
   while (current) {
+    int cur_pos;
+
     if (current != entry) {
       str[str_pos] = '\\';  /* add delimiter */
       str_pos--;
@@ -688,8 +690,7 @@ int bde_cfg_add_entry(bde_entry_t *list, char *szFQNPath, char *szName, char *sz
  *  calls bde_cfg_add_entry() to update linked list, if necessary.
  *   bde_cfg_update() returns a total number of updated and added entries.
  */
-int bde_cfg_update(bde_entry_t *list, char *szFileName)
-{  
+int bde_cfg_update(bde_entry_t *list, char *szFileName) {  
   FILE *f;
   int err, i, change_no = 0;
   char buf[MAX_BUFFER], *szFQNPath, *szName, *szValue;
