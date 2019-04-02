@@ -29,13 +29,10 @@ executable has two serious bugs:
 If you use idapi32cfg program, it is best to update to the latest 1.0.x
 version of bdecli.
 
-bdecli is compiled with Visual C++ 6.0 SP6. The advantage of using such an old
-compiler is that Windows 2000 and up includes full shared run-time. This means
-that executable could stay small, no need to link run-time statically. Also it
-means that shared runtime is automatically updated with security fixes as part
-of Windows Update or WSUS patching. idapi32cfg executable from April 2010 was
-compiled using Visual C++ 2010 with statically linked run-time and compressed
-with UPX.
+Starting with v1.0.5, bdecli is compiled with Visual C++ 2019.
+bdecli v1.0.1 to v1.0.4 were compiled with Visual C++ 6.0 SP6.
+idapi32cfg 1.0.0 executable from April 2010 was compiled with Visual C++ 2010.
+Run-time was statically linked. Resulting executable was compressed with UPX.
 
 
 Using bdecli
@@ -47,14 +44,14 @@ settings in new idapi32.cfg.
 
 Export default settings to a text file using the following command:
 
-		bdecli -e idapi32.cfg default.txt
+    bdecli -e idapi32.cfg default.txt
 
 Now open bdeadmin program again and make necessary configuration changes for
 your application. Save to idapi32.cfg.
 
 Export updated idapi32.cfg file to another text file:
 
-		bdecli -e idapi32.cfg updated.txt
+    bdecli -e idapi32.cfg updated.txt
 
 Use your favorite text file comparison tool (fc, windiff, winmerge etc.) to
 find all lines in updated.txt that are not part of default.txt and put the
@@ -64,7 +61,7 @@ Add this new text file and bdecli executable to your MSI project or deployment
 script. Use the following command to import application specific configuration
 settings:
 
-		bdecli -i idapi32.cfg cfgdiff.txt
+    bdecli -i idapi32.cfg cfgdiff.txt
 
 
 Future development plans
@@ -80,14 +77,7 @@ adding, updating, removing and so on.
 
 * Add some test units for manual validation or CI integration.
 
-* Move from built-in data structure handling to uthash. It is a bit tough to
-learn how to use it properly and it is currently not passing its own test
-suite on Windows and Visual C++.
-
 * Start providing a DLL version that could be called from MSI custom action.
-
-* Add icon to bdecli executable. Use rc.exe or <http://code.google.com/p/rescle/>
-for this at build time.
 
 * Create better documentation.
 
