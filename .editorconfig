@@ -6,12 +6,14 @@ root = true
 end_of_line = lf
 insert_final_newline = true
 trim_trailing_whitespace = true
+max_line_length = 79
 
 # first attept as per https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties
 [*.{c,cc,cpp,h,hh,hpp}]
-indent_style = space
-indent_size = 2
-curly_bracket_next_line = false
+tab_width = 4
+indent_style = tab
+indent_size = tab
+curly_bracket_next_line = true
 spaces_around_operators = true
 spaces_around_brackets = outside
-indent_brace_style = K&R
+indent_brace_style = Allman
