@@ -24,7 +24,7 @@
 #ifndef COMPAT_S_H
 #define COMPAT_S_H
 
-/* Check if compiler is Visual C++ version is below 2005, Watcom or GCC */
+/* Check if compiler is Visual C++ version is below 2005, Watcom, GCC or Digital Mars */
 #if ((_MSC_VER && (_MSC_VER < 1400)) || (__WATCOMC__) || (__GNUC__) || (__DMC__))
 
 #define COMPAT_S	1
@@ -45,7 +45,7 @@
 #define fprintf_s	fprintf
 #define printf_s	printf
 
-#endif	/* ((_MSC_VER < 1400) || (__WATCOMC__)) */
+#endif	/* COMPAT_S */
 
 
 #if (_MSC_VER >= 1400)
@@ -56,7 +56,7 @@
 #define _strdup		strdup
 #define fileno(fp)	((fp)->_file)
 #define _fileno(fp)	((fp)->_file)
-#endif	/* #ifdef __DMC__ */
+#endif	/* __DMC__ */
 
 #ifdef __clang__
 #define _strdup		strdup
