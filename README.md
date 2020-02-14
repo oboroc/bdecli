@@ -62,28 +62,3 @@ script. Use the following command to import application specific configuration
 settings:
 
     bdecli -i idapi32.cfg cfgdiff.txt
-
-
-Future development plans
-------------------------
-
-It is quite clear that applications that use BDE are on their last legs.
-Nevertheless, I like working on this tool and plan to do major changes in
-future. I'd like to:
-
-* Add more command line settings and make bdecli work a lot like built-in
-Windows reg.exe tool. This includes both batch and command-line querying,
-adding, updating, removing and so on.
-
-* Add some test units for manual validation or CI integration.
-
-* Start providing a DLL version that could be called from MSI custom action.
-
-* Create better documentation.
-
-* Add new release link to all my old forums posts about previous CodePlex release:
-    - <http://www.dbforums.com/corel-paradox/1199036-modifying-idapi32-cfg.html>
-    - <http://www.xtremevbtalk.com/showthread.php?t=209454>
-    - <http://www.itninja.com/question/idapi32-cfg-file-for-bde-help>
-
-* Consider using established command-line parameter parsing library like [argtable](http://argtable.sourceforge.net/).
