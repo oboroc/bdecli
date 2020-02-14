@@ -688,7 +688,7 @@ int bde_cfg_update(bde_entry_t * list, char* szFileName) {
 	}
 
 	while (!feof(f)) {
-		if (!fgets(buf, MAX_BUFFER - 1, f))
+		if (!fgets(buf, MAX_BUFFER - 1, f)) {
 			/* we get here if fgets failed due to error or end of file */
 			if (ferror(f)) {
 				fprintf_s(stderr, "Error in bde_cfg_export(): fgets() failed while reading from \"%s\"\n", szFileName);
@@ -696,9 +696,9 @@ int bde_cfg_update(bde_entry_t * list, char* szFileName) {
 			}
 			else
 				break;	/* no error, exit loop */
+		}
 
-			/* next we should split the line from text file into FQN path,
-			variable name and variable value */
+		/* next we should split the line from text file into FQN path, variable name and variable value */
 		szFQNPath = (char*)buf;
 
 		/* skip leading white space */
