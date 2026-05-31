@@ -1,6 +1,6 @@
 /* bdecli - Borland Database Engine command-line interface.
  *
- * Copyright (c) 2010-2019 Adrian Oboroc
+ * Copyright (c) 2010 Adrian Oboroc
  *
  * This file is part of bdecli project: https://github.com/oboroc/bdecli/
  *
@@ -14,7 +14,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <errno.h>
 
 #include "compat_s.h"
 
