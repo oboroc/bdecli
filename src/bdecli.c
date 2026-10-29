@@ -122,7 +122,7 @@ bde_entry_t* bde_cfg_parse(char* szFileName)
 	start = bde_new_entry(NULL, NULL);
 	current = start;
 
-	err = fopen_s(&f, szFileName, "r");	/* open for read (will fail if file does not exist) */
+	err = fopen_s(&f, szFileName, "rb");	/* open for read (will fail if file does not exist) */
 
 	if ((0 != err) || (0 == f)) {
 		fprintf_s(stderr, "Error in bde_cfg_parse(): file \"%s\" was not opened\n", szFileName);
@@ -311,7 +311,7 @@ void bde_cfg_export(bde_entry_t * list, char* szFileName)
 	/* Initialize current pointer */
 	current = list;
 
-	err = fopen_s(&f, szFileName, "w");	/* open for writing (will overwrite if file exists) */
+	err = fopen_s(&f, szFileName, "wb");	/* open for writing (will overwrite if file exists) */
 
 	if ((0 != err) || (NULL == f)) {
 		fprintf_s(stderr, "Error in bde_cfg_export(): file \"%s\" was not opened\n", szFileName);
