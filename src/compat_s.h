@@ -10,7 +10,7 @@
 #ifndef COMPAT_S_H
 #define COMPAT_S_H
 
-/* Check if compiler is Visual C++ version is below 2005, Watcom, GCC or Digital Mars */
+/* Check if compiler is Visual C++ below 2005, Watcom, GCC or Digital Mars */
 #if ((_MSC_VER && (_MSC_VER < 1400)) || (__WATCOMC__) || (__GNUC__) || (__DMC__))
 
 #define COMPAT_S	1
