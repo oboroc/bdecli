@@ -15,9 +15,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "compat_s.h"
+//#include "compat_s.h"
 
-#define BDECLI_VER "1.0.5"
+#define BDECLI_VER "1.0.6-wip"
 #define MAX_BUFFER 1000
 #define BDE_NUL 0
 #define BDE_VAR 1
@@ -525,7 +525,7 @@ int bde_cfg_add_entry(bde_entry_t * list, char* szFQNPath, char* szName, char* s
 	/* iterate through containers in szFQNPath */
 	while (0 != tmp[i]) {
 		if (('\\' == tmp[i]) || (0 == tmp[i + 1])) {
-			if (i > MAX_BUFFER) {
+			if (i >= MAX_BUFFER) {
 				/* sanitize possible buffer overflow */
 				fprintf_s(stderr, "Error in bde_cfg_add_entry(): string buffer is too small");
 				exit(1);
