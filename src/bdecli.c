@@ -43,9 +43,21 @@ char* bde_fgets(FILE* f) {
 	char* str;
 	int ch;
 	char buf[MAX_BUFFER];
-	int r_len;
+	size_t r_len;
+
+	/* check for invalid file pointer */
+	if (!f) {
+		fprintf_s(stderr, "Error in bde_fgets(): invalid file pointer\n");
+		exit(1);
+	}
 
 	ch = fgetc(f);
+
+	/* check for unexpected end of file */
+	if (EOF == ch) {
+		fprintf_s(stderr, "Error in bde_fgets(): unexpected end of file in string parser\n");
+		exit(1);
+	}
 
 	/* we expect byte with value 0 */
 	if (BDE_NUL != ch) {
@@ -57,31 +69,30 @@ char* bde_fgets(FILE* f) {
 	r_len = 0;
 
 	do {
-		/* build string in heap buffer */
-		ch = fgetc(f);
-		buf[r_len] = (char)ch;
-
-		r_len++;
-
 		/* check for potential buffer overflow */
 		if (MAX_BUFFER == r_len) {
 			fprintf_s(stderr, "Error in bde_fgets(): buffer overflow in string parser\n");
 			exit(1);  /* fail */
 		}
 
+		/* build string in heap buffer */
+		ch = fgetc(f);
+
 		/* check for unexpected end of file */
-		if (feof(f)) {
+		if (EOF == ch) {
 			fprintf_s(stderr, "Error in bde_fgets(): unexpected end of file in string parser\n");
 			exit(1);
 		}
 
+		buf[r_len] = (char)ch;
+		r_len++;
 	} while ((BDE_NUL != ch));
 
 	/* allocate memory for the return string */
 	str = (char*)malloc(r_len);
 
 	if (!str) {
-		fprintf_s(stderr, "Error in bde_fgets(): failed to allocate %i bytes of memory for return string\n", r_len);
+		fprintf_s(stderr, "Error in bde_fgets(): failed to allocate %zu bytes of memory for return string\n", r_len);
 		exit(1);
 	}
 
