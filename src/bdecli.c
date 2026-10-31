@@ -392,7 +392,7 @@ void bde_cfg_write(bde_entry_t * list, char* szFileName) {
 	/* Initialize current pointer */
 	current = list;
 
-	err = fopen_s(&f, szFileName, "w");	/* open for writing (will overwrite if file exists) */
+	err = fopen_s(&f, szFileName, "wb");	/* open for writing (will overwrite if file exists) */
 
 	if (0 != err) {
 		fprintf_s(stderr, "Error in bde_cfg_write(): file \"%s\" was not opened\n", szFileName);
@@ -690,7 +690,7 @@ int bde_cfg_update(bde_entry_t * list, char* szFileName) {
 	int err, i, change_no = 0;
 	char buf[MAX_BUFFER], * szFQNPath, * szName, * szValue;
 
-	err = fopen_s(&f, szFileName, "r"); /* open for reading */
+	err = fopen_s(&f, szFileName, "rb"); /* open for reading */
 
 	if (0 != err) {
 		fprintf_s(stderr, "Error in bde_cfg_export(): file \"%s\" was not opened\n", szFileName);
