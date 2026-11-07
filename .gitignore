@@ -314,3 +314,4 @@ $RECYCLE.BIN/
 *.cfg
 *.txt
 bdecli-cppcheck-build-dir/
+.vscode
