@@ -1,7 +1,7 @@
 bdecli
 ======
 
-Copyright (c) 2010-2019 Adrian Oboroc <https://github.com/oboroc/bdecli/>
+Copyright (c) 2010 Adrian Oboroc <https://github.com/oboroc/bdecli/>
 
 About bdecli
 ------------
@@ -26,10 +26,10 @@ executable has two serious bugs:
 [75cb743](https://github.com/oboroc/bdecli/commit/75cb743) and
 [4a48981](https://github.com/oboroc/bdecli/commit/4a48981).
 
-If you use idapi32cfg program, it is best to update to the latest 1.0.x
-version of bdecli.
+If you use idapi32cfg program, it is best to update to the latest version of
+bdecli.
 
-Starting with v1.0.5, bdecli is compiled with Visual C++ 2019.
+bdecli v1.0.5 is compiled with Visual C++ 2019.
 bdecli v1.0.1 to v1.0.4 were compiled with Visual C++ 6.0 SP6.
 idapi32cfg 1.0.0 executable from April 2010 was compiled with Visual C++ 2010.
 Run-time was statically linked. Resulting executable was compressed with UPX.
