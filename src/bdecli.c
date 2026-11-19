@@ -72,7 +72,7 @@ char* bde_fgets(FILE* f) {
 		/* check for potential buffer overflow */
 		if (MAX_BUFFER == r_len) {
 			fprintf_s(stderr, "Error in bde_fgets(): buffer overflow in string parser\n");
-			exit(1);  /* fail */
+			exit(1);
 		}
 
 		/* build string in heap buffer */
@@ -101,13 +101,14 @@ char* bde_fgets(FILE* f) {
 	return str;
 }
 
+
 bde_entry_t* bde_new_entry(bde_entry_t* prev, bde_entry_t* cont) {
 	bde_entry_t* entry;
 
 	entry = (bde_entry_t*)malloc(sizeof(bde_entry_t));
 
 	if (!entry) {
-		fprintf_s(stderr, "Error in bde_new_entry(): failed to allocate %lu bytes of memory for linked list entry\n", (unsigned long)sizeof(bde_entry_t));
+		fprintf_s(stderr, "Error in bde_new_entry(): failed to allocate %llu bytes of memory for linked list entry\n", sizeof(bde_entry_t));
 		exit(1);
 	}
 
@@ -122,7 +123,8 @@ bde_entry_t* bde_new_entry(bde_entry_t* prev, bde_entry_t* cont) {
 	return entry;
 }
 
-bde_entry_t* bde_cfg_parse(char* szFileName)
+
+bde_entry_t* bde_cfg_parse(char* file_name)
 {
 	FILE* f;
 	int err, ch;
@@ -133,10 +135,10 @@ bde_entry_t* bde_cfg_parse(char* szFileName)
 	start = bde_new_entry(NULL, NULL);
 	current = start;
 
-	err = fopen_s(&f, szFileName, "rb");	/* open for read (will fail if file does not exist) */
+	err = fopen_s(&f, file_name, "rb");	/* open for read (will fail if file does not exist) */
 
 	if ((0 != err) || (0 == f)) {
-		fprintf_s(stderr, "Error in bde_cfg_parse(): file \"%s\" was not opened\n", szFileName);
+		fprintf_s(stderr, "Error in bde_cfg_parse(): file \"%s\" was not opened\n", file_name);
 		exit(1);
 	}
 
@@ -154,77 +156,56 @@ bde_entry_t* bde_cfg_parse(char* szFileName)
 			exit(1);
 		}
 
-
 		ch = fgetc(f);	/* read block id from file */
 
 		switch (ch) {
-
 		case BDE_NUL:	/* 0x0000 - container */
-
 			str = bde_fgets(f);
-
 			ch = fgetc(f);
 			if (BDE_VAR != ch) {
 				fprintf_s(stderr, "Error in bde_cfg_parse(): unexpected byte at the end of contrainer name. Expected %i, actual value is %i\n", BDE_VAR, ch);
 				exit(1);
 			}
-
 			ch = fgetc(f);
 			if (BDE_NUL != ch) {
 				fprintf_s(stderr, "Error in bde_cfg_parse(): unexpected second byte after the end of contrainer name. Expected %i, actual value is %i\n", BDE_NUL, ch);
 				exit(1);
 			}
-
 			current->entry_type = BDE_CONTAINER;
 			current->name = str;
 			current = bde_new_entry(current, current);  /* spawn a new linked list entry */
-
 			break;
-
 		case BDE_VAR:	/* 0x0001 - value */
-
 			str = bde_fgets(f);
-
 			ch = fgetc(f);
 			if (BDE_EQU != ch) {
 				fprintf_s(stderr, "Error in bde_cfg_parse(): unexpected byte between variable name and value. Expected %i, actual value %i\n", BDE_EQU, ch);
 				exit(1);
 			}
-
 			value = bde_fgets(f);
-
 			if (!value) {
 				fprintf_s(stderr, "Error in bde_cfg_parse(): failed to parse the value of variable\n");
 				exit(1);
 			}
-
 			current->entry_type = BDE_VARIABLE;
 			current->name = str;
 			current->value = value;
-
 			current = bde_new_entry(current, current->container); /* spawn a new linked list entry */
-
 			break;
-
 		default:
-
 			fprintf_s(stderr, "Error in bde_cfg_parse(): unexpected byte in main parser loop: %i", ch);
 			exit(1);
-
 		}
 
 		/* parse the end of line */
 		do {
 			ch = fgetc(f);
-
 			if (BDE_EOB == ch) {
 				/* end of contrainer, go to upper level container */
 				if (current->container)
 					current->container = current->container->container;
-
 				/* check for padding zero byte */
 				ch = fgetc(f);
-
 				if (BDE_NUL != ch) {
 					fprintf_s(stderr, "Error in bde_cfg_parse(): unexpected byte at the end of line. Expected %i, actual value is %i\n", BDE_NUL, ch);
 					exit(1);
@@ -232,7 +213,6 @@ bde_entry_t* bde_cfg_parse(char* szFileName)
 			}
 		} while ((!feof(f)) && (BDE_NEW != ch));
 	}
-
 	if (!current->name) {
 		/* sanitize last preallocated linked list entry */
 		current->previous->next = NULL;	/* set the next field of previous linked list entry to null */
@@ -245,6 +225,7 @@ bde_entry_t* bde_cfg_parse(char* szFileName)
 
 	return start;
 }
+
 
 /* build and return a fully qualified hierarchical name of entry */
 char* bde_fqn(bde_entry_t * entry) {
@@ -267,7 +248,7 @@ char* bde_fqn(bde_entry_t * entry) {
 	str = (char*)malloc(str_len + 1);
 
 	if (NULL == str) {
-		fprintf_s(stderr, "Error in bde_fqn(): failed to allocate %lu bytes for return string\n", (unsigned long)str_len);
+		fprintf_s(stderr, "Error in bde_fqn(): failed to allocate %llu bytes for return string\n", str_len);
 		exit(1);
 	}
 
@@ -298,6 +279,7 @@ char* bde_fqn(bde_entry_t * entry) {
 	return str;
 }
 
+
 int bde_containers(bde_entry_t * entry) {
 	int count;
 
@@ -312,7 +294,7 @@ int bde_containers(bde_entry_t * entry) {
 }
 
 
-void bde_cfg_export(bde_entry_t * list, char* szFileName)
+void bde_cfg_export(bde_entry_t * list, char* file_name)
 {
 	FILE* f;
 	int err;
@@ -322,10 +304,10 @@ void bde_cfg_export(bde_entry_t * list, char* szFileName)
 	/* Initialize current pointer */
 	current = list;
 
-	err = fopen_s(&f, szFileName, "wb");	/* open for writing (will overwrite if file exists) */
+	err = fopen_s(&f, file_name, "wb");	/* open for writing (will overwrite if file exists) */
 
 	if ((0 != err) || (NULL == f)) {
-		fprintf_s(stderr, "Error in bde_cfg_export(): file \"%s\" was not opened\n", szFileName);
+		fprintf_s(stderr, "Error in bde_cfg_export(): file \"%s\" was not opened\n", file_name);
 		exit(1);
 	}
 
@@ -384,7 +366,7 @@ void bde_fputs(char* str, FILE * f) {
 
 
 /* write from linked list to BDE configuration file */
-void bde_cfg_write(bde_entry_t * list, char* szFileName) {
+void bde_cfg_write(bde_entry_t * list, char* file_name) {
 	FILE* f;
 	int err, ld, eob;
 	bde_entry_t* current, * tmp_c, * tmp_n;
@@ -392,10 +374,10 @@ void bde_cfg_write(bde_entry_t * list, char* szFileName) {
 	/* Initialize current pointer */
 	current = list;
 
-	err = fopen_s(&f, szFileName, "wb");	/* open for writing (will overwrite if file exists) */
+	err = fopen_s(&f, file_name, "wb");	/* open for writing (will overwrite if file exists) */
 
 	if (0 != err) {
-		fprintf_s(stderr, "Error in bde_cfg_write(): file \"%s\" was not opened\n", szFileName);
+		fprintf_s(stderr, "Error in bde_cfg_write(): file \"%s\" was not opened\n", file_name);
 		exit(1);
 	}
 
@@ -517,7 +499,7 @@ int bde_contains(bde_entry_t * co, bde_entry_t * entry) {
  * bde_cfg_add_entry() will create it. Return 1 if variable was created or modified,
  * 0 otherwise.
 */
-int bde_cfg_add_entry(bde_entry_t * list, char* szFQNPath, char* szName, char* szValue) {
+int bde_cfg_add_entry(bde_entry_t * list, char* fqn_path, char* entry_name, char* entry_value) {
 	bde_entry_t* current, * parcon, * co, * tmp_e;
 	char buf[MAX_BUFFER], * tmp;
 	size_t i, buflen;
@@ -528,12 +510,12 @@ int bde_cfg_add_entry(bde_entry_t * list, char* szFQNPath, char* szName, char* s
 		exit(1);
 	}
 
-	tmp = szFQNPath;
+	tmp = fqn_path;
 	i = 0;
 	co = NULL;
 	parcon = NULL;
 
-	/* iterate through containers in szFQNPath */
+	/* iterate through containers in fqn_path */
 	while (0 != tmp[i]) {
 		if (('\\' == tmp[i]) || (0 == tmp[i + 1])) {
 			if (i >= MAX_BUFFER) {
@@ -618,12 +600,12 @@ int bde_cfg_add_entry(bde_entry_t * list, char* szFQNPath, char* szName, char* s
 	current = co->next;
 	while ((current) && (current->container == co)) {
 		if ((BDE_VARIABLE == current->entry_type) &&
-			(0 == strcmp(current->name, szName))) {
+			(0 == strcmp(current->name, entry_name))) {
 			/* found variable, compare it's value to new value */
-			if (0 == strcmp(current->value, szValue))
+			if (0 == strcmp(current->value, entry_value))
 				return 0;
 			else {
-				buflen = strlen(szValue) + 1;
+				buflen = strlen(entry_value) + 1;
 
 				if (buflen != strlen(current->value) + 1) {
 					free(current->value);
@@ -634,7 +616,7 @@ int bde_cfg_add_entry(bde_entry_t * list, char* szFQNPath, char* szName, char* s
 						exit(1);
 					}
 				}
-				strcpy_s(current->value, buflen, szValue);
+				strcpy_s(current->value, buflen, entry_value);
 				return 1;
 			}
 			break;
@@ -657,19 +639,19 @@ int bde_cfg_add_entry(bde_entry_t * list, char* szFQNPath, char* szName, char* s
 
 	current->entry_type = BDE_VARIABLE;
 
-	current->name = (char*)malloc(strlen(szName) + 1);	/* allocate memory for name */
+	current->name = (char*)malloc(strlen(entry_name) + 1);	/* allocate memory for name */
 	if (!current->name) {
 		fprintf_s(stderr, "Error in bde_cfg_add_entry(): malloc() failed while creating new variable name\n");
 		exit(1);
 	}
-	strcpy_s(current->name, strlen(szName) + 1, szName);
+	strcpy_s(current->name, strlen(entry_name) + 1, entry_name);
 
-	current->value = (char*)malloc(strlen(szValue) + 1);	/* allocate memory for value */
+	current->value = (char*)malloc(strlen(entry_value) + 1);	/* allocate memory for value */
 	if (!current->value) {
 		fprintf_s(stderr, "Error in bde_cfg_add_entry(): malloc() failed while creating new variable value\n");
 		exit(1);
 	}
-	strcpy_s(current->value, strlen(szValue) + 1, szValue);
+	strcpy_s(current->value, strlen(entry_value) + 1, entry_value);
 
 	/* relink the list */
 	current->next = tmp_e;
@@ -685,15 +667,15 @@ int bde_cfg_add_entry(bde_entry_t * list, char* szFQNPath, char* szName, char* s
  * calls bde_cfg_add_entry() to update linked list, if necessary.
  * bde_cfg_update() returns a total number of updated and added entries.
  */
-int bde_cfg_update(bde_entry_t * list, char* szFileName) {
+int bde_cfg_update(bde_entry_t * list, char* file_name) {
 	FILE* f;
 	int err, i, change_no = 0;
-	char buf[MAX_BUFFER], * szFQNPath, * szName, * szValue;
+	char buf[MAX_BUFFER], * fqn_path, * entry_name, * entry_value;
 
-	err = fopen_s(&f, szFileName, "rb"); /* open for reading */
+	err = fopen_s(&f, file_name, "rb"); /* open for reading */
 
 	if (0 != err) {
-		fprintf_s(stderr, "Error in bde_cfg_export(): file \"%s\" was not opened\n", szFileName);
+		fprintf_s(stderr, "Error in bde_cfg_export(): file \"%s\" was not opened\n", file_name);
 		exit(1);
 	}
 
@@ -701,7 +683,7 @@ int bde_cfg_update(bde_entry_t * list, char* szFileName) {
 		if (!fgets(buf, MAX_BUFFER - 1, f)) {
 			/* we get here if fgets failed due to error or end of file */
 			if (ferror(f)) {
-				fprintf_s(stderr, "Error in bde_cfg_export(): fgets() failed while reading from \"%s\"\n", szFileName);
+				fprintf_s(stderr, "Error in bde_cfg_export(): fgets() failed while reading from \"%s\"\n", file_name);
 				exit(1);
 			}
 			else
@@ -709,68 +691,68 @@ int bde_cfg_update(bde_entry_t * list, char* szFileName) {
 		}
 
 		/* next we should split the line from text file into FQN path, variable name and variable value */
-		szFQNPath = (char*)buf;
+		fqn_path = (char*)buf;
 
 		/* skip leading white space */
-		while ((*szFQNPath == ' ') || (*szFQNPath == '\t'))
-			szFQNPath++;
+		while ((*fqn_path == ' ') || (*fqn_path == '\t'))
+			fqn_path++;
 
 		/* check for empty line, if found, skip to next */
-		if (*szFQNPath == 0)
+		if (*fqn_path == 0)
 			continue;
 
 		/* look for '=' */
 		i = 0;
-		while ((szFQNPath[i] != '=') && (szFQNPath[i] != 0))
+		while ((fqn_path[i] != '=') && (fqn_path[i] != 0))
 			i++;
 
 		/* sanitize for '=' presense */
-		if (szFQNPath[i] != '=') {
-			fprintf_s(stderr, "Error in bde_cfg_export(): no '=' in line %s from file %s\n", buf, szFileName);
+		if (fqn_path[i] != '=') {
+			fprintf_s(stderr, "Error in bde_cfg_export(): no '=' in line %s from file %s\n", buf, file_name);
 			exit(1);
 		}
 
 		/* point to value memory location after '=' and white space */
-		szValue = szFQNPath + i + 1;
-		while ((*szValue == ' ') || (*szValue == '\t'))
-			szValue++;
+		entry_value = fqn_path + i + 1;
+		while ((*entry_value == ' ') || (*entry_value == '\t'))
+			entry_value++;
 
-		/* back to szFQNPath - pad '=' and trailing white space before it with zeroes */
+		/* back to fqn_path - pad '=' and trailing white space before it with zeroes */
 		while ((0 < i) &&
-			(('=' == szFQNPath[i]) || (' ' == szFQNPath[i]) || ('\t' == szFQNPath[i]))) {
-			szFQNPath[i] = 0;
+			(('=' == fqn_path[i]) || (' ' == fqn_path[i]) || ('\t' == fqn_path[i]))) {
+			fqn_path[i] = 0;
 			i--;
 		}
 
-		/* search for last '\' in szFQNPath */
+		/* search for last '\' in fqn_path */
 		while (0 < i) {
-			if ('\\' == szFQNPath[i])
+			if ('\\' == fqn_path[i])
 				break;	/* found '\', exit loop */
 			else
 				i--;
 		}
 
-		if ('\\' != szFQNPath[i]) {
-			fprintf_s(stderr, "Error in bde_cfg_export(): failed to find '\\' in '%s'\n", szFQNPath);
+		if ('\\' != fqn_path[i]) {
+			fprintf_s(stderr, "Error in bde_cfg_export(): failed to find '\\' in '%s'\n", fqn_path);
 			return 0;
 		}
 
-		szFQNPath[i] = 0;
-		szName = szFQNPath + i + 1;
+		fqn_path[i] = 0;
+		entry_name = fqn_path + i + 1;
 
 		/* find the end of value string */
 		i = 0;
-		while (szValue[i] != 0) {
+		while (entry_value[i] != 0) {
 			/* get rid of cr/lf */
-			if ((szValue[i] == 10) || (szValue[i] == 13)) {
-				szValue[i] = 0;
+			if ((entry_value[i] == 10) || (entry_value[i] == 13)) {
+				entry_value[i] = 0;
 				break;
 			}
 			i++;
 		}
 
 		/* add new entry to linked list, based on FQN path, variable name and variable value */
-		change_no += bde_cfg_add_entry(list, szFQNPath, szName, szValue);
+		change_no += bde_cfg_add_entry(list, fqn_path, entry_name, entry_value);
 	}
 
 	/* close stream */
