@@ -108,7 +108,7 @@ bde_entry_t* bde_new_entry(bde_entry_t* prev, bde_entry_t* cont) {
 	entry = (bde_entry_t*)malloc(sizeof(bde_entry_t));
 
 	if (!entry) {
-		fprintf_s(stderr, "Error in bde_new_entry(): failed to allocate %llu bytes of memory for linked list entry\n", sizeof(bde_entry_t));
+		fprintf_s(stderr, "Error in bde_new_entry(): failed to allocate %zu bytes of memory for linked list entry\n", sizeof(bde_entry_t));
 		exit(1);
 	}
 
@@ -148,7 +148,7 @@ bde_entry_t* bde_cfg_parse(char* file_name)
 		exit(1);
 	}
 
-	while (!feof(f)) {
+	while (EOF != ch) {
 		if (BDE_NEW != ch) {
 			fprintf_s(stderr, "Error in bde_cfg_parse(): unexpected byte at the beginning of line. Expected %i, actual value is %i\n", BDE_NEW, ch);
 			exit(1);
@@ -215,8 +215,14 @@ bde_entry_t* bde_cfg_parse(char* file_name)
 					exit(1);
 				}
 			}
-		} while ((!feof(f)) && (BDE_NEW != ch));
+		} while ((EOF != ch) && (BDE_NEW != ch));
 	}
+
+	if (ferror(f)) {
+		fprintf_s(stderr, "Error in bde_cfg_parse(): read error while parsing \"%s\"\n", file_name);
+		exit(1);
+	}
+
 	if (!current->name) {
 		/* sanitize last preallocated linked list entry */
 		current->previous->next = NULL;	/* set the next field of previous linked list entry to null */
@@ -238,9 +244,25 @@ char* bde_fqn(bde_entry_t * entry) {
 	size_t str_len;
 	int str_pos;
 
+    /* validate input */
+	if (NULL == entry) {
+		fprintf_s(stderr, "Error in bde_fqn(): entry is NULL\n");
+		exit(1);
+	}
+
 	current = entry;
 	str_len = 0;
 	while (current) {
+		if (NULL == current->name) {
+			fprintf_s(stderr, "Error in bde_fqn(): entry name is NULL\n");
+			exit(1);
+		}
+
+		if (0 == strlen(current->name)) {
+			fprintf_s(stderr, "Error in bde_fqn(): entry name is an empty string\n");
+			exit(1);
+		}
+
 		str_len += strlen(current->name);
 
 		if (current != entry)
@@ -252,7 +274,7 @@ char* bde_fqn(bde_entry_t * entry) {
 	str = (char*)malloc(str_len + 1);
 
 	if (NULL == str) {
-		fprintf_s(stderr, "Error in bde_fqn(): failed to allocate %llu bytes for return string\n", str_len);
+		fprintf_s(stderr, "Error in bde_fqn(): failed to allocate %zu bytes for return string\n", str_len);
 		exit(1);
 	}
 
@@ -502,7 +524,7 @@ int bde_contains(bde_entry_t * co, bde_entry_t * entry) {
  * has different value, bde_cfg_add_entry() will update it. If variable doesn't exist
  * bde_cfg_add_entry() will create it. Return 1 if variable was created or modified,
  * 0 otherwise.
-*/
+ */
 int bde_cfg_add_entry(bde_entry_t * list, char* fqn_path, char* entry_name, char* entry_value) {
 	bde_entry_t* current, * parcon, * co, * tmp_e;
 	char buf[MAX_BUFFER], * tmp;
@@ -522,7 +544,7 @@ int bde_cfg_add_entry(bde_entry_t * list, char* fqn_path, char* entry_name, char
 	/* iterate through containers in fqn_path */
 	while (0 != tmp[i]) {
 		if (('\\' == tmp[i]) || (0 == tmp[i + 1])) {
-			if (i >= MAX_BUFFER) {
+			if (i >= MAX_BUFFER - 1) {
 				/* sanitize possible buffer overflow */
 				fprintf_s(stderr, "Error in bde_cfg_add_entry(): string buffer is too small");
 				exit(1);
