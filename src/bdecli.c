@@ -1,5 +1,5 @@
 /* bdecli - Borland Database Engine command-line interface.
- *
+ *`
  * Copyright (c) 2010 Adrian Oboroc
  *
  * This file is part of bdecli project: https://github.com/oboroc/bdecli/
@@ -143,6 +143,10 @@ bde_entry_t* bde_cfg_parse(char* file_name)
 	}
 
 	ch = fgetc(f);
+	if (EOF == ch) {
+		fprintf_s(stderr, "Error in bde_cfg_parse(): input file %s is empty\n", file_name);
+		exit(1);
+	}
 
 	while (!feof(f)) {
 		if (BDE_NEW != ch) {
